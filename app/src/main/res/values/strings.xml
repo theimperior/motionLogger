@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">MotionLogger</string>
     <string name="edit_message">test</string>
-    <string name="button_send">Send</string>
+    <string name="button_start">Start</string>
+    <string name="Console_text">Console</string>
 </resources>
