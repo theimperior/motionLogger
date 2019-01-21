@@ -2,5 +2,6 @@
     <string name="app_name">MotionLogger</string>
     <string name="edit_message">test</string>
     <string name="button_start">Start</string>
-    <string name="Console_text">Console</string>
+    <string name="console_text">Console\n1.1\n</string>
+    <string name="button_sensor">read Sensors</string>
 </resources>
