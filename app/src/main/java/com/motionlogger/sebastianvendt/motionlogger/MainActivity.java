@@ -72,37 +72,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addMessageToConsole(String message) {
-
-       /* if(console != null){
-            console.append(message);
-            final Layout layout = console.getLayout();
-            if(layout != null){
-                int scrollDelta = layout.getLineBottom(console.getLineCount() - 1)
-                        - console.getScrollY() - console.getHeight();
-                if(scrollDelta > 0)
-                    console.scrollBy(0, scrollDelta);
-            }
-        }*/
-
-        console.append(message);/*
-        Layout consoleLayout = console.getLayout();
-        if(consoleLayout != null) {
-            final int scrollAmount = consoleLayout.getLineTop(console.getLineCount()) - console.getHeight();
-            if(scrollAmount > 0) {
-                console.scrollTo(0, scrollAmount);
-            } else {
-                console.scrollTo(0,0);
-            }
-        }*/
+        console.append(message);
     }
 
-    public void sendMessage(View view) {
-       /* Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.Console);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);*/
-
+    public void recordTrainingData (View view) {
+        Intent recTrainingData = new Intent(this, TouchInterface.class);
+        startActivity(recTrainingData);
     }
 
 
