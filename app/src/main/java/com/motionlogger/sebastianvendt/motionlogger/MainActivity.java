@@ -18,26 +18,22 @@ import android.widget.TextView;
 import java.util.Iterator;
 import java.util.List;
 
+/*
+Main activity to prepare the collection of sensor data
+- checks permisions to write to the external storage
+- checks if the sensors are available to read
+- links to the activity to start the recording
+- UI for the following settings:
+ */
 
 public class MainActivity extends AppCompatActivity {
     private SensorManager mSensorManager;
     private TextView console;
 
-    private View.OnTouchListener handleTouch = new View.OnTouchListener() {
-
-        public boolean onTouch(View v, MotionEvent event) {
-            int x = (int) event.getX();
-            int y = (int) event.getY();
-            Log.d("TAG", "touched" + x + " " + y + " ");
-            return true;
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        findViewById(android.R.id.content).setOnTouchListener(handleTouch);
         console = (TextView) findViewById(R.id.Console);
         console.setMovementMethod(new ScrollingMovementMethod());
         //Check the availability of the external storage
