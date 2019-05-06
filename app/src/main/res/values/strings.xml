@@ -4,4 +4,7 @@
     <string name="button_start">Start</string>
     <string name="console_text">Console\n1.1\n</string>
     <string name="button_sensor">read Sensors</string>
+    <string name="tapCounter_text">0</string>
+    <string name="fileName_text">filename.txt</string>
+    <string name="button_stopRecording">End recording</string>
 </resources>

@@ -6,12 +6,8 @@ import android.hardware.SensorManager;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Layout;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
 import android.content.Intent;
 import android.widget.TextView;
 
@@ -63,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         while (sensorIterator.hasNext()){
             Sensor sens = sensorIterator.next();
-            addMessageToConsole(sens.getName() + "\n");
+            addMessageToConsole(sens.getName() + ", type: " + sens.getStringType() + "\n");
         }
     }
 
@@ -72,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void recordTrainingData (View view) {
-        Intent recTrainingData = new Intent(this, TouchInterface.class);
+        Intent recTrainingData = new Intent(this, RecordingActivity.class);
         startActivity(recTrainingData);
     }
 
