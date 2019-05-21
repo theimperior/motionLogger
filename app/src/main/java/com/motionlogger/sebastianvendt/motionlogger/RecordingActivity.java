@@ -1,9 +1,11 @@
 package com.motionlogger.sebastianvendt.motionlogger;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -24,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 /*
@@ -69,12 +72,18 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
     private int touch;
     private int touchCounter;
 
+
+
+
+    private boolean recActive = false;
+
     TextView textViewTapCounter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recording);
+
         findViewById(android.R.id.content).setOnTouchListener(this);
 
         LinearLayout canvasSurface = (LinearLayout) findViewById(R.id.LinearLayoutCanvas);
@@ -146,20 +155,27 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            touch = 1;
-            touchCounter += 1;
-            touchCoordinates[0] = (int) event.getX();
-            touchCoordinates[1] = (int) event.getY();
-            textViewTapCounter.setText("" + touchCounter);
-        } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            touch = 0;
-            touchCoordinates[0] = 0;
-            touchCoordinates[1] = 0;
-        } else {
-            //do some error handling
+        int maskedAction = event.getActionMasked();
+        int actionIndex = event.getActionIndex();
+        if(recActive) {
+            if (maskedAction == MotionEvent.ACTION_DOWN || maskedAction == MotionEvent.ACTION_POINTER_DOWN) {
+                touch = 1;
+                touchCounter += 1;
+                touchCoordinates[0] = (int) event.getX(actionIndex);
+                touchCoordinates[1] = (int) event.getY(actionIndex);
+                textViewTapCounter.setText("" + touchCounter);
+                Log.d("TAG", "X " + touchCoordinates[0] + " Y " + touchCoordinates[1] + " " + touch);
+            } else if (maskedAction == MotionEvent.ACTION_UP) { //ACTION_UP gets fired when the final pointer is released
+                touch = 0;
+                touchCoordinates[0] = 0;
+                touchCoordinates[1] = 0;
+            } else if (maskedAction == MotionEvent.ACTION_MOVE || maskedAction == MotionEvent.ACTION_POINTER_UP) {
+                //TODO find appropriate handling of this event
+            } else {
+                Log.e("ERROR", "Encountered unknown touch event " + maskedAction);
+            }
+
         }
-        //Log.d("TAG", "touched" + x + " " + y + " " + touch);
         return true;
     }
 
@@ -205,18 +221,21 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
             e.printStackTrace();
         }
         sManGYRO.registerListener(this, sensorGYRO, SENSORDELAY);
+        recActive = true;
     }
 
     public void onPausing(View view) {
         Log.d("INFO", "pause logging");
         sManLACC.unregisterListener(this);
         sManGYRO.unregisterListener(this);
+        recActive = false;
     }
 
     public void stopRecording(View view) {
         Log.d("INFO", "stop logging");
         sManLACC.unregisterListener(this);
         sManGYRO.unregisterListener(this);
+        recActive = false;
         //return to the main activity and clean up
         finish();
     }
@@ -241,27 +260,89 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
 }
 
 class TapMap extends SurfaceView {
+    private final int kernelsize = 30;
+    private final int width = 1080;
+    private final int height = 980;
+    private int mapWidth;
+    private int mapHeight;
+    private int offset = (int)Math.floor(kernelsize / 2);
+    private final int deltaRGB[] = {226, 77, 255};
+    private final int deltaColor = ;
+    private final double maxStep = 5;
+    private final double deltaStepRGB[] = {deltaRGB[0] / maxStep, deltaRGB[1] / maxStep, deltaRGB[2] / maxStep};
 
     private final SurfaceHolder surfaceHolder;
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
+    private Bitmap heatmap;
+
+    private int[][] tapCounter = new int[width + 2 * offset][height + 2 * offset];
+
     public TapMap(Context context) {
         super(context);
         surfaceHolder = getHolder();
-        paint.setColor(Color.RED);
-        paint.setStyle(Paint.Style.FILL);
+        //paint.setColor(Color.RED);
+        //paint.setStyle(Paint.Style.FILL);
+
+        //Create Bitmap and fill with white
+        mapWidth = width + 2 * offset;
+        mapHeight = height + 2 * offset;
+        heatmap = Bitmap.createBitmap(mapWidth, mapHeight, Bitmap.Config.ARGB_8888);
+        heatmap.eraseColor(getColor((byte)255, (byte)255, (byte)255, (byte)255));
+        //TODO set color of the canvas initially
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+        int action = event.getActionMasked();
+        int XY[] = {(int) event.getX(event.getActionIndex()), (int) event.getY(event.getActionIndex())};
+        if(action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) {
+            updateTapCounter(XY[0], XY[1]);
+            //TODO the tapcounter needs to be set to 1 within the whole kernel to effectivly get a heatmap
+
+            //Bitmap canvasBitmap = Bitmap.createBitmap(heatmap, offset, offset, width, height);
             if (surfaceHolder.getSurface().isValid()) {
                 Canvas canvas = surfaceHolder.lockCanvas();
-                canvas.drawColor(Color.BLACK);
-                canvas.drawCircle(event.getX(), event.getY(), 50, paint);
+                canvas.drawBitmap(heatmap, new Rect(offset, offset, width + offset, height + offset), new Rect(offset, offset, width + offset, height + offset), null);
+                //canvas.drawColor(Color.BLACK);
+                //canvas.drawCircle(event.getX(), event.getY(), 50, paint);
                 surfaceHolder.unlockCanvasAndPost(canvas);
             }
         }
         return false;
+    }
+
+    private int getColor (int r, int g, int b, int alpha) {
+        return (alpha & 0xff) << 24 | (b & 0xff) << 16 | (g & 0xff) << 8 | (r & 0xff);
+    }
+
+    private void updateTapCounter(int x, int y) {
+        for (int i = 0; i < kernelsize; i++) {
+            for(int k = 0; k < kernelsize; k++){
+                tapCounter[x - offset + i][y - offset + k] += 1;
+            }
+        }
+    }
+
+    private void updateHeatMap(int x, int y) {
+        //int tapcount = tapCounter[x][y];
+        int[] pixels = new int[kernelsize * kernelsize];
+        //create entry in heatmap
+
+        for (int i = 0; i < pixels.length; i++) {
+
+        }
+
+        int red = tapcount >= maxStep ? (int) (255 - deltaRGB[0]) : (int) (255 - deltaStepRGB[0] * tapcount);
+        int green = tapcount >= maxStep ? (int) (255 - deltaRGB[1]) : (int) (255 - deltaStepRGB[1] * tapcount);
+        int blue = tapcount >= maxStep ? (int) (255 - deltaRGB[2]) : (int) (255 - deltaStepRGB[2] * tapcount);
+        int color = getColor(red, green, blue, 255);
+
+        Arrays.fill(pixels, color);
+        try {
+            heatmap.setPixels(pixels, 0, kernelsize, XY[0] - offset, XY[1] - offset, kernelsize, kernelsize);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
