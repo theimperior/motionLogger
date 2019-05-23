@@ -267,7 +267,6 @@ class TapMap extends SurfaceView {
     private int mapHeight;
     private int offset = (int)Math.floor(kernelsize / 2);
     private final int deltaRGB[] = {226, 77, 255};
-    private final int deltaColor = ;
     private final double maxStep = 5;
     private final double deltaStepRGB[] = {deltaRGB[0] / maxStep, deltaRGB[1] / maxStep, deltaRGB[2] / maxStep};
 
@@ -297,13 +296,11 @@ class TapMap extends SurfaceView {
         int action = event.getActionMasked();
         int XY[] = {(int) event.getX(event.getActionIndex()), (int) event.getY(event.getActionIndex())};
         if(action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) {
-            updateTapCounter(XY[0], XY[1]);
-            //TODO the tapcounter needs to be set to 1 within the whole kernel to effectivly get a heatmap
-
+            updateHeatmap(XY[0], XY[1]);
             //Bitmap canvasBitmap = Bitmap.createBitmap(heatmap, offset, offset, width, height);
             if (surfaceHolder.getSurface().isValid()) {
                 Canvas canvas = surfaceHolder.lockCanvas();
-                canvas.drawBitmap(heatmap, new Rect(offset, offset, width + offset, height + offset), new Rect(offset, offset, width + offset, height + offset), null);
+                canvas.drawBitmap(heatmap, new Rect(offset, offset, width + offset, height + offset), new Rect(0, 0, width, height), null);
                 //canvas.drawColor(Color.BLACK);
                 //canvas.drawCircle(event.getX(), event.getY(), 50, paint);
                 surfaceHolder.unlockCanvasAndPost(canvas);
@@ -316,33 +313,23 @@ class TapMap extends SurfaceView {
         return (alpha & 0xff) << 24 | (b & 0xff) << 16 | (g & 0xff) << 8 | (r & 0xff);
     }
 
-    private void updateTapCounter(int x, int y) {
+    private void updateHeatmap(int x, int y) {
         for (int i = 0; i < kernelsize; i++) {
             for(int k = 0; k < kernelsize; k++){
                 tapCounter[x - offset + i][y - offset + k] += 1;
+                int tapcount = tapCounter[x - offset + i][y - offset + k];
+                //color needs to be recalculated every time since we have integer arithmetics. Otherwise we could only add a deltacolor onto every pixel
+                //within the kernel
+                int red = tapcount >= maxStep ? (int) (255 - deltaRGB[0]) : (int) (255 - deltaStepRGB[0] * tapcount);
+                int green = tapcount >= maxStep ? (int) (255 - deltaRGB[1]) : (int) (255 - deltaStepRGB[1] * tapcount);
+                int blue = tapcount >= maxStep ? (int) (255 - deltaRGB[2]) : (int) (255 - deltaStepRGB[2] * tapcount);
+                int color = getColor(red, green, blue, 255);
+                try {
+                    heatmap.setPixel(x-offset+i, y-offset+k, color);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                }
             }
-        }
-    }
-
-    private void updateHeatMap(int x, int y) {
-        //int tapcount = tapCounter[x][y];
-        int[] pixels = new int[kernelsize * kernelsize];
-        //create entry in heatmap
-
-        for (int i = 0; i < pixels.length; i++) {
-
-        }
-
-        int red = tapcount >= maxStep ? (int) (255 - deltaRGB[0]) : (int) (255 - deltaStepRGB[0] * tapcount);
-        int green = tapcount >= maxStep ? (int) (255 - deltaRGB[1]) : (int) (255 - deltaStepRGB[1] * tapcount);
-        int blue = tapcount >= maxStep ? (int) (255 - deltaRGB[2]) : (int) (255 - deltaStepRGB[2] * tapcount);
-        int color = getColor(red, green, blue, 255);
-
-        Arrays.fill(pixels, color);
-        try {
-            heatmap.setPixels(pixels, 0, kernelsize, XY[0] - offset, XY[1] - offset, kernelsize, kernelsize);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }
