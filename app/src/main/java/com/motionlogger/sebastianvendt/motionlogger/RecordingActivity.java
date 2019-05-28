@@ -1,6 +1,8 @@
 package com.motionlogger.sebastianvendt.motionlogger;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -34,7 +36,7 @@ The interface for the actual logging of sensor data while the user taps on the s
 shows the picture of a keyboard, logs the sensor data in all directions from the motion sensor and the gyroscope (maybe neglate one axis)
 into a file with unique filename (year, month, day, time) +  taps in that session
 output will be a column oriented csv file
-ACC-X | ACC-Y | ACC-Z | GYR-X | GYR-Y | GYR-Z | TOUCH (0/1) | LOC-X | LOC-Y
+GYRO_DIFF, GYRO_X, GYRO_Y, GYRO_Z, ACC_DIFF, ACC_X, ACC_Y, ACC_Z, TOUCH_DOWN, TOUCH_X, TOUCH_Y
 This allows a postprocessing with matlab to cut the windows of the touch events and also allows for data augmentation later on
 windows of fixed size will be extracted
 -> check how long most touch events last since we have a fixed window size
@@ -45,7 +47,10 @@ has a button to end the record, to pause it and to resume it
 
 public class RecordingActivity extends AppCompatActivity implements SensorEventListener, View.OnTouchListener {
 
-    static final int SENSORDELAY = SensorManager.SENSOR_DELAY_GAME;
+    static final int SENSORDELAY = SensorManager.SENSOR_DELAY_FASTEST;
+
+    public static final String CONSOLE_MSG = "Empty";
+    private String ConMessageBuffer = "";
 
     private File recordFolder;
     private File recordFile;
@@ -58,22 +63,21 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
     private SensorManager sManGYRO;
     private Sensor sensorGYRO;
 
-    private float[] gyroscope = new float[3];
+    private float[] gyroscopeXYZ = new float[3];
     private long timediffGyro;
 
-    private float[] accelerometer = new float[3];
+    private float[] accelerometerXYZ = new float[3];
     private long timediffACC;
 
     private long timestampGyro;
     private long timestampAcc;
     private long eventcounter;
 
-    private int[] touchCoordinates = new int[2];
+    private int[] touchCoordinates = {0, 0};
     private int touch;
     private int touchCounter;
-
-
-
+    private int[] trackedID = {0, 0};
+    private int moveActionCounter = 0;
 
     private boolean recActive = false;
 
@@ -92,10 +96,11 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
         //setup the recording
         DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HHmm");
         Date date = new Date();
-        initFileStream(dateFormat.format(date));
+        initFileStream(dateFormat.format(date) + ".csv");
         //set the textfield to the appropriate filename
         TextView textViewFileName = (TextView) findViewById(R.id.fileName);
         textViewFileName.setText(dateFormat.format(date));
+        appendToMsgBuffer("saved to file: " + dateFormat.format((date)) + "\n");
 
         textViewTapCounter = (TextView) findViewById(R.id.tapCounter);
 
@@ -105,14 +110,30 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
         touch = 0;
 
         //create fileheader
-        writeBuffer("GYRO_DIFF, GYRO_X, GYRO_Y, GYRO_Z, ACC_DIFF, ACC_X, ACC_Y, ACC_Z, TOUCH_DOWN, TOUCH_X, TOUCH_Y \n");
+        writeBuffer("GYRO_DIFF, GYRO_X, GYRO_Y, GYRO_Z, ACC_DIFF, ACC_X, ACC_Y, ACC_Z, TOUCH_DOWN, TOUCH_X, TOUCH_Y, ID1, ID2 \n");
     }
 
     @Override
     protected void onDestroy() {
         //called when the recording is finished
         super.onDestroy();
+        Log.d("INFO", "stop logging");
+        sManLACC.unregisterListener(this);
+        sManGYRO.unregisterListener(this);
+        recActive = false;
+
+        //return to the main activity and clean up
+        //create new Intent for console message
+
+        appendToMsgBuffer("Statistics of the last recording:");
+        appendToMsgBuffer(touchCounter + " touch events");
+        appendToMsgBuffer(eventcounter + " sensor events");
+        appendToMsgBuffer(moveActionCounter + " moveAction events");
         closeFileStream();
+        final Intent data = new Intent();
+        data.putExtra(CONSOLE_MSG, "test");
+        //TODO probably the setresult should be called before finish!
+        setResult(Activity.RESULT_OK, data);
     }
 
 
@@ -127,36 +148,48 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
             Log.d("INFO", eventcounter + " events");
         }
         if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
-            accelerometer[0] = event.values[0];
-            accelerometer[1] = event.values[1];
-            accelerometer[2] = event.values[2];
+            accelerometerXYZ[0] = event.values[0];
+            accelerometerXYZ[1] = event.values[1];
+            accelerometerXYZ[2] = event.values[2];
             timediffACC = event.timestamp - timestampAcc;
             timestampAcc = event.timestamp;
             //Log.d("INFO", "ACC: " + diffACC + " " + accX + ", " + accY + ", " + accZ);
         } else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-            gyroscope[0] = event.values[0];
-            gyroscope[1] = event.values[1];
-            gyroscope[2] = event.values[2];
+            gyroscopeXYZ[0] = event.values[0];
+            gyroscopeXYZ[1] = event.values[1];
+            gyroscopeXYZ[2] = event.values[2];
             timediffGyro = event.timestamp - timestampGyro;
             timestampGyro = event.timestamp;
             //Log.d("INFO", "GYR: " + diffGyro + " " + gyrX + ", " + gyrY + ", " + gyrZ);
         }
         if (eventcounter % 2 == 0) {
             //write to stream
-            writeBuffer(timediffGyro + ", " + gyroscope[0] + ", " + gyroscope[1] + ", " + gyroscope[2] + ", " +
-                    timediffACC + ", " + accelerometer[0] + ", " + accelerometer[1] + ", " + accelerometer[2] + ", " + touch + ", " + touchCoordinates[0] + ", " + touchCoordinates[1] + "\n");
+            writeBuffer(timediffGyro + ", " + gyroscopeXYZ[0] + ", " + gyroscopeXYZ[1] + ", " + gyroscopeXYZ[2] + ", " +
+                    timediffACC + ", " + accelerometerXYZ[0] + ", " + accelerometerXYZ[1] + ", " + accelerometerXYZ[2] + ", " +
+                    touch + ", " + touchCoordinates[0] + ", " + touchCoordinates[1] +
+                    trackedID[0] + ", " + trackedID[1] + "\n");
+            touchCoordinates[0] = 0;
+            touchCoordinates[1] = 0;
+            touch = 0;
+            trackedID[0] = 0;
+            trackedID[1] = 0;
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
+        appendToMsgBuffer("Error - Accuracy of sensor " + sensor.getName() + "changed to " + accuracy);
+        appendToMsgBuffer("End recording");
+        finish();
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int maskedAction = event.getActionMasked();
         int actionIndex = event.getActionIndex();
+        int actionID = event.getPointerId(actionIndex);
+
+
         if(recActive) {
             if (maskedAction == MotionEvent.ACTION_DOWN || maskedAction == MotionEvent.ACTION_POINTER_DOWN) {
                 touch = 1;
@@ -165,14 +198,35 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
                 touchCoordinates[1] = (int) event.getY(actionIndex);
                 textViewTapCounter.setText("" + touchCounter);
                 Log.d("TAG", "X " + touchCoordinates[0] + " Y " + touchCoordinates[1] + " " + touch);
-            } else if (maskedAction == MotionEvent.ACTION_UP) { //ACTION_UP gets fired when the final pointer is released
-                touch = 0;
-                touchCoordinates[0] = 0;
-                touchCoordinates[1] = 0;
+                if(trackedID[0] != 0) {
+                    if (trackedID[1] != 0) {
+                        // no free space in the array -> something went wrong
+                        Log.e("TAG", "Encountered third pointer ID while tracking two - too many fingers on the screen!!");
+                        appendToMsgBuffer("ERROR - Encountered third pointer ID while tracking two - too many fingers on the screen!!");
+                        finish();
+                    } else {
+                        trackedID[1] = actionID;
+                    }
+                } else {
+                    trackedID[0] = actionID;
+                }
+           } else if (maskedAction == MotionEvent.ACTION_UP || maskedAction == MotionEvent.ACTION_POINTER_UP) { //ACTION_UP gets fired when the final pointer is released
+                //find the actionID and remove it
+                if(trackedID[0] == actionID) {
+                    trackedID[0] = 0;
+                } else if(trackedID[1] == actionID){
+                    trackedID[1] = 0;
+                } else {
+                    Log.e("ERROR", "Could not find action ID among the tracked IDs, something went wrong here");
+                    appendToMsgBuffer("ERROR - Could not find action ID among the tracked IDs");
+                    finish();
+                }
             } else if (maskedAction == MotionEvent.ACTION_MOVE || maskedAction == MotionEvent.ACTION_POINTER_UP) {
-                //TODO find appropriate handling of this event
+                moveActionCounter += 1;
             } else {
                 Log.e("ERROR", "Encountered unknown touch event " + maskedAction);
+                appendToMsgBuffer("ERROR - Unknown touch event");
+                finish();
             }
 
         }
@@ -189,6 +243,8 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
             buffer = new BufferedOutputStream(filestream);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            appendToMsgBuffer("ERROR - could not init file stream");
+            finish();
         }
     }
 
@@ -197,9 +253,10 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
         if (sManLACC.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION) != null) {
             sensorLACC = sManLACC.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         } else {
+            //TODO instead of logging to the logger, finish activity and log to the console!
             Log.e("ERROR", "Initializing linear accelerometer failed, could not get sensor");
         }
-        Log.d("INIT", "sucessfully initialized linear Acceleration sensor");
+        Log.d("INIT", "successfully initialized linear Acceleration sensor");
 
         sManGYRO = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         if (sManGYRO.getDefaultSensor(Sensor.TYPE_GYROSCOPE) != null) {
@@ -207,7 +264,7 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
         } else {
             Log.e("ERROR", "Initializing gyroscope failed, could not get sensor");
         }
-        Log.d("INIT", "sucessfully initialized Gyroscope sensor");
+        Log.d("INIT", "successfully initialized Gyroscope sensor");
         Log.d("INFO", "Min Delay of ACC " + sensorLACC.getMinDelay());
         Log.d("INFO", "Min Delay of GYRO " + sensorGYRO.getMinDelay());
     }
@@ -232,11 +289,6 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
     }
 
     public void stopRecording(View view) {
-        Log.d("INFO", "stop logging");
-        sManLACC.unregisterListener(this);
-        sManGYRO.unregisterListener(this);
-        recActive = false;
-        //return to the main activity and clean up
         finish();
     }
 
@@ -245,17 +297,24 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
             buffer.write(string.getBytes());
         } catch (java.io.IOException e) {
             e.printStackTrace();
+            appendToMsgBuffer("Error writing buffer - see log for details");
+            finish();
         }
     }
 
     private void closeFileStream() {
-        Log.d("INFO", "closing Filestream");
+        Log.d("INFO", "closing filestream");
         try {
             buffer.flush();
             filestream.close();
         } catch (java.io.IOException e) {
             e.printStackTrace();
+            appendToMsgBuffer("ERROR closing file stream - see log for details");
         }
+    }
+
+    private void appendToMsgBuffer(String msg) {
+        ConMessageBuffer = ConMessageBuffer + msg + "\n";
     }
 }
 

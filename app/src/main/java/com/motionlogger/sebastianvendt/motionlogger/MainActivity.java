@@ -1,5 +1,6 @@
 package com.motionlogger.sebastianvendt.motionlogger;
 
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -22,9 +23,11 @@ Main activity to prepare the collection of sensor data
 - UI for the following settings:
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     private SensorManager mSensorManager;
     private TextView console;
+
+    private static final int REQUEST_CODE = 0x19FF;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +72,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void recordTrainingData (View view) {
         Intent recTrainingData = new Intent(this, RecordingActivity.class);
-        startActivity(recTrainingData);
+        //startActivity(recTrainingData);
+        startActivityForResult(recTrainingData, REQUEST_CODE);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if(requestCode == REQUEST_CODE) {
+            if(resultCode == Activity.RESULT_OK) {
+                final String resultString = data.getStringExtra(RecordingActivity.CONSOLE_MSG);
+                addMessageToConsole(resultString);
+            }
+        }
+    }
 };
