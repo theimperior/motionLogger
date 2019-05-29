@@ -5,7 +5,6 @@ import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
@@ -24,7 +23,6 @@ Main activity to prepare the collection of sensor data
  */
 
 public class MainActivity extends Activity {
-    private SensorManager mSensorManager;
     private TextView console;
 
     private static final int REQUEST_CODE = 0x19FF;
@@ -46,27 +44,24 @@ public class MainActivity extends Activity {
 
     }
 
-    public boolean isExternalStorageWritable() {
+    private boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     public void readSensors(View view) {
         //list the sensors available on the device
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        SensorManager mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         List<Sensor> deviceSensors = mSensorManager.getSensorList(Sensor.TYPE_ALL);
         Iterator<Sensor> sensorIterator = deviceSensors.iterator();
 
         while (sensorIterator.hasNext()){
             Sensor sens = sensorIterator.next();
-            addMessageToConsole(sens.getName() + ", type: " + sens.getStringType() + "\n");
+            addMessageToConsole(sens.getName() + ", type: " + sens.getName() + "\n");
         }
     }
 
-    public void addMessageToConsole(String message) {
+    private void addMessageToConsole(String message) {
         console.append(message);
     }
 
@@ -87,4 +82,4 @@ public class MainActivity extends Activity {
             }
         }
     }
-};
+}

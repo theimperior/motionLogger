@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.hardware.Sensor;
@@ -28,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 
 /*
@@ -47,14 +45,11 @@ has a button to end the record, to pause it and to resume it
 
 public class RecordingActivity extends AppCompatActivity implements SensorEventListener, View.OnTouchListener {
 
-    static final int SENSORDELAY = SensorManager.SENSOR_DELAY_FASTEST;
+    private static final int SENSORDELAY = SensorManager.SENSOR_DELAY_FASTEST;
 
     public static final String CONSOLE_MSG = "Empty";
     private String ConMessageBuffer = "";
 
-    private File recordFolder;
-    private File recordFile;
-    private File path;
     private BufferedOutputStream buffer;
     private FileOutputStream filestream;
 
@@ -71,17 +66,20 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
 
     private long timestampGyro;
     private long timestampAcc;
-    private long eventcounter;
+    private long eventcounter = 0;
+    private long[] startTimeTouch = {0, 0};
+    private long[] timeDiffTouch = {0, 0};
 
     private int[] touchCoordinates = {0, 0};
-    private int touch;
-    private int touchCounter;
-    private int[] trackedID = {0, 0};
+    private int touch = 0;
+    private int touchCounter = 0;
+    private int pointerCounter = 0;
+    private int[] trackedID = {-1, -1};
     private int moveActionCounter = 0;
 
     private boolean recActive = false;
 
-    TextView textViewTapCounter;
+    private TextView textViewTapCounter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +90,7 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
 
         LinearLayout canvasSurface = (LinearLayout) findViewById(R.id.LinearLayoutCanvas);
         canvasSurface.addView(new TapMap(this));
+        canvasSurface.setBackgroundColor(TapMap.getColor((byte)200, (byte)200, (byte)200, (byte)255));
 
         //setup the recording
         DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HHmm");
@@ -100,14 +99,12 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
         //set the textfield to the appropriate filename
         TextView textViewFileName = (TextView) findViewById(R.id.fileName);
         textViewFileName.setText(dateFormat.format(date));
-        appendToMsgBuffer("saved to file: " + dateFormat.format((date)) + "\n");
+        appendToMsgBuffer("-------------");
+        appendToMsgBuffer("saved to file: " + dateFormat.format((date)));
 
         textViewTapCounter = (TextView) findViewById(R.id.tapCounter);
 
         initSensor();
-        eventcounter = 0;
-        touchCounter = 0;
-        touch = 0;
 
         //create fileheader
         writeBuffer("GYRO_DIFF, GYRO_X, GYRO_Y, GYRO_Z, ACC_DIFF, ACC_X, ACC_Y, ACC_Z, TOUCH_DOWN, TOUCH_X, TOUCH_Y, ID1, ID2 \n");
@@ -117,34 +114,12 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
     protected void onDestroy() {
         //called when the recording is finished
         super.onDestroy();
-        Log.d("INFO", "stop logging");
-        sManLACC.unregisterListener(this);
-        sManGYRO.unregisterListener(this);
-        recActive = false;
-
-        //return to the main activity and clean up
-        //create new Intent for console message
-
-        appendToMsgBuffer("Statistics of the last recording:");
-        appendToMsgBuffer(touchCounter + " touch events");
-        appendToMsgBuffer(eventcounter + " sensor events");
-        appendToMsgBuffer(moveActionCounter + " moveAction events");
-        closeFileStream();
-        final Intent data = new Intent();
-        data.putExtra(CONSOLE_MSG, "test");
-        //TODO probably the setresult should be called before finish!
-        setResult(Activity.RESULT_OK, data);
     }
 
-
-    /*
-        storing both events in separate variables
-        has a counter and after every two events both get written into the output file
-     */
     @Override
     public final void onSensorChanged(SensorEvent event) {
         eventcounter += 1;
-        if (eventcounter % 50 == 0) {
+        if (eventcounter % 5000 == 0) {
             Log.d("INFO", eventcounter + " events");
         }
         if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
@@ -166,21 +141,19 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
             //write to stream
             writeBuffer(timediffGyro + ", " + gyroscopeXYZ[0] + ", " + gyroscopeXYZ[1] + ", " + gyroscopeXYZ[2] + ", " +
                     timediffACC + ", " + accelerometerXYZ[0] + ", " + accelerometerXYZ[1] + ", " + accelerometerXYZ[2] + ", " +
-                    touch + ", " + touchCoordinates[0] + ", " + touchCoordinates[1] +
+                    touch + ", " + touchCoordinates[0] + ", " + touchCoordinates[1] + ", " +
                     trackedID[0] + ", " + trackedID[1] + "\n");
             touchCoordinates[0] = 0;
             touchCoordinates[1] = 0;
             touch = 0;
-            trackedID[0] = 0;
-            trackedID[1] = 0;
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        appendToMsgBuffer("Error - Accuracy of sensor " + sensor.getName() + "changed to " + accuracy);
-        appendToMsgBuffer("End recording");
-        finish();
+        appendToMsgBuffer("WARNING - Accuracy of sensor " + sensor.getName() + " changed to " + accuracy);
+        //appendToMsgBuffer("End recording");
+        //finishActivity();
     }
 
     @Override
@@ -188,55 +161,70 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
         int maskedAction = event.getActionMasked();
         int actionIndex = event.getActionIndex();
         int actionID = event.getPointerId(actionIndex);
-
-
-        if(recActive) {
+        if (recActive) {
             if (maskedAction == MotionEvent.ACTION_DOWN || maskedAction == MotionEvent.ACTION_POINTER_DOWN) {
                 touch = 1;
                 touchCounter += 1;
+                if(maskedAction == MotionEvent.ACTION_POINTER_DOWN) pointerCounter += 1;
                 touchCoordinates[0] = (int) event.getX(actionIndex);
                 touchCoordinates[1] = (int) event.getY(actionIndex);
+
+                //measure time of touch
+                if(startTimeTouch[0] != 0){
+                    if(startTimeTouch[1] != 0) {
+                        Log.e("TAG", "Encountered third start time while tracking already two - too many fingers on the screen!!");
+                        appendToMsgBuffer("ERROR - Encountered third start time while tracking already two - too many fingers on the screen!!");
+                        finishActivity();
+                    } else {
+                        startTimeTouch[1] = System.nanoTime();
+                    }
+                } else {
+                    startTimeTouch[0] = System.nanoTime();
+                }
+
                 textViewTapCounter.setText("" + touchCounter);
-                Log.d("TAG", "X " + touchCoordinates[0] + " Y " + touchCoordinates[1] + " " + touch);
-                if(trackedID[0] != 0) {
-                    if (trackedID[1] != 0) {
+                Log.d("TAG", "X " + touchCoordinates[0] + " Y " + touchCoordinates[1] + " " + touch + " ID: " + actionID);
+                if (trackedID[0] != -1) {
+                    if (trackedID[1] != -1) {
                         // no free space in the array -> something went wrong
                         Log.e("TAG", "Encountered third pointer ID while tracking two - too many fingers on the screen!!");
                         appendToMsgBuffer("ERROR - Encountered third pointer ID while tracking two - too many fingers on the screen!!");
-                        finish();
+                        finishActivity();
                     } else {
                         trackedID[1] = actionID;
                     }
                 } else {
                     trackedID[0] = actionID;
                 }
-           } else if (maskedAction == MotionEvent.ACTION_UP || maskedAction == MotionEvent.ACTION_POINTER_UP) { //ACTION_UP gets fired when the final pointer is released
+            } else if (maskedAction == MotionEvent.ACTION_UP || maskedAction == MotionEvent.ACTION_POINTER_UP) { //ACTION_UP gets fired when the final pointer is released
+                //calculate duration of touch
+
+
                 //find the actionID and remove it
-                if(trackedID[0] == actionID) {
-                    trackedID[0] = 0;
-                } else if(trackedID[1] == actionID){
-                    trackedID[1] = 0;
+                if (trackedID[0] == actionID) {
+                    trackedID[0] = -1;
+                } else if (trackedID[1] == actionID) {
+                    trackedID[1] = -1;
                 } else {
                     Log.e("ERROR", "Could not find action ID among the tracked IDs, something went wrong here");
                     appendToMsgBuffer("ERROR - Could not find action ID among the tracked IDs");
-                    finish();
+                    finishActivity();
                 }
-            } else if (maskedAction == MotionEvent.ACTION_MOVE || maskedAction == MotionEvent.ACTION_POINTER_UP) {
+            } else if (maskedAction == MotionEvent.ACTION_MOVE) {
                 moveActionCounter += 1;
             } else {
                 Log.e("ERROR", "Encountered unknown touch event " + maskedAction);
                 appendToMsgBuffer("ERROR - Unknown touch event");
-                finish();
+                finishActivity();
             }
-
         }
         return true;
     }
 
     private void initFileStream(String filename) {
         //Files storage directory is under Main Storage - Android - Data - com.motionlogger.sebastianvendt.motionlogger - files
-        path = this.getExternalFilesDir(null);
-        recordFile = new File(path, filename);
+        File path = this.getExternalFilesDir(null);
+        File recordFile = new File(path, filename);
         filestream = null;
         try {
             filestream = new FileOutputStream(recordFile);
@@ -244,7 +232,7 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             appendToMsgBuffer("ERROR - could not init file stream");
-            finish();
+            finishActivity();
         }
     }
 
@@ -253,8 +241,9 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
         if (sManLACC.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION) != null) {
             sensorLACC = sManLACC.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         } else {
-            //TODO instead of logging to the logger, finish activity and log to the console!
             Log.e("ERROR", "Initializing linear accelerometer failed, could not get sensor");
+            appendToMsgBuffer("ERROR - init linear ACC failed, could not get sensor");
+            finishActivity();
         }
         Log.d("INIT", "successfully initialized linear Acceleration sensor");
 
@@ -263,6 +252,8 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
             sensorGYRO = sManGYRO.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         } else {
             Log.e("ERROR", "Initializing gyroscope failed, could not get sensor");
+            appendToMsgBuffer("ERROR - Init GYRO failed, could not get sensor");
+            finishActivity();
         }
         Log.d("INIT", "successfully initialized Gyroscope sensor");
         Log.d("INFO", "Min Delay of ACC " + sensorLACC.getMinDelay());
@@ -289,7 +280,7 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
     }
 
     public void stopRecording(View view) {
-        finish();
+        finishActivity();
     }
 
     private void writeBuffer(String string) {
@@ -298,7 +289,7 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
         } catch (java.io.IOException e) {
             e.printStackTrace();
             appendToMsgBuffer("Error writing buffer - see log for details");
-            finish();
+            finishActivity();
         }
     }
 
@@ -316,21 +307,44 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
     private void appendToMsgBuffer(String msg) {
         ConMessageBuffer = ConMessageBuffer + msg + "\n";
     }
+
+    private void finishActivity() {
+        Log.d("INFO", "stop logging");
+        sManLACC.unregisterListener(this);
+        sManGYRO.unregisterListener(this);
+        recActive = false;
+
+        //return to the main activity and clean up
+        //create new Intent for console message
+
+        appendToMsgBuffer("Statistics of the last recording:");
+        appendToMsgBuffer(touchCounter + " touch events");
+        appendToMsgBuffer(eventcounter + " sensor events");
+        appendToMsgBuffer(moveActionCounter + " moveAction events");
+        appendToMsgBuffer(pointerCounter + " overlapping touch events");
+        closeFileStream();
+        final Intent data = new Intent();
+        data.putExtra(CONSOLE_MSG, ConMessageBuffer);
+        //TODO probably the setresult should be called before finish!
+        setResult(Activity.RESULT_OK, data);
+        finish();
+    }
 }
 
 class TapMap extends SurfaceView {
     private final int kernelsize = 30;
     private final int width = 1080;
     private final int height = 980;
-    private int mapWidth;
-    private int mapHeight;
-    private int offset = (int)Math.floor(kernelsize / 2);
-    private final int deltaRGB[] = {226, 77, 255};
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int mapWidth;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int mapHeight;
+    private final int offset = (int)Math.floor(kernelsize / 2);
+    private final int[] deltaRGB = {226, 77, 255};
     private final double maxStep = 5;
-    private final double deltaStepRGB[] = {deltaRGB[0] / maxStep, deltaRGB[1] / maxStep, deltaRGB[2] / maxStep};
+    private final double[] deltaStepRGB = {deltaRGB[0] / maxStep, deltaRGB[1] / maxStep, deltaRGB[2] / maxStep};
 
     private final SurfaceHolder surfaceHolder;
-    private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private Bitmap heatmap;
 
@@ -346,29 +360,28 @@ class TapMap extends SurfaceView {
         mapWidth = width + 2 * offset;
         mapHeight = height + 2 * offset;
         heatmap = Bitmap.createBitmap(mapWidth, mapHeight, Bitmap.Config.ARGB_8888);
-        heatmap.eraseColor(getColor((byte)255, (byte)255, (byte)255, (byte)255));
-        //TODO set color of the canvas initially
+        heatmap.eraseColor(getColor((byte)210, (byte)210, (byte)210, (byte)255));
+        //TODO initial drawing of the heatmap might be a bit tricky since the surface is at creation time of the TapMap not yet available might need to implement callbacks
+        //https://stackoverflow.com/questions/47669143/holder-getsurface-isvalid-is-returning-false
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getActionMasked();
-        int XY[] = {(int) event.getX(event.getActionIndex()), (int) event.getY(event.getActionIndex())};
+        int[] XY = {(int) event.getX(event.getActionIndex()), (int) event.getY(event.getActionIndex())};
         if(action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) {
             updateHeatmap(XY[0], XY[1]);
             //Bitmap canvasBitmap = Bitmap.createBitmap(heatmap, offset, offset, width, height);
             if (surfaceHolder.getSurface().isValid()) {
                 Canvas canvas = surfaceHolder.lockCanvas();
                 canvas.drawBitmap(heatmap, new Rect(offset, offset, width + offset, height + offset), new Rect(0, 0, width, height), null);
-                //canvas.drawColor(Color.BLACK);
-                //canvas.drawCircle(event.getX(), event.getY(), 50, paint);
                 surfaceHolder.unlockCanvasAndPost(canvas);
             }
         }
         return false;
     }
 
-    private int getColor (int r, int g, int b, int alpha) {
+    public static int getColor (int r, int g, int b, int alpha) {
         return (alpha & 0xff) << 24 | (b & 0xff) << 16 | (g & 0xff) << 8 | (r & 0xff);
     }
 
@@ -379,9 +392,9 @@ class TapMap extends SurfaceView {
                 int tapcount = tapCounter[x - offset + i][y - offset + k];
                 //color needs to be recalculated every time since we have integer arithmetics. Otherwise we could only add a deltacolor onto every pixel
                 //within the kernel
-                int red = tapcount >= maxStep ? (int) (255 - deltaRGB[0]) : (int) (255 - deltaStepRGB[0] * tapcount);
-                int green = tapcount >= maxStep ? (int) (255 - deltaRGB[1]) : (int) (255 - deltaStepRGB[1] * tapcount);
-                int blue = tapcount >= maxStep ? (int) (255 - deltaRGB[2]) : (int) (255 - deltaStepRGB[2] * tapcount);
+                int red = tapcount >= maxStep ? (255 - deltaRGB[0]) : (int) (255 - deltaStepRGB[0] * tapcount);
+                int green = tapcount >= maxStep ? (255 - deltaRGB[1]) : (int) (255 - deltaStepRGB[1] * tapcount);
+                int blue = tapcount >= maxStep ? (255 - deltaRGB[2]) : (int) (255 - deltaStepRGB[2] * tapcount);
                 int color = getColor(red, green, blue, 255);
                 try {
                     heatmap.setPixel(x-offset+i, y-offset+k, color);
