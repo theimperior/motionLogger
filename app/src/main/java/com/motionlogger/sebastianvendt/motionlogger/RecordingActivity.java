@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -68,7 +67,9 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
     private long timestampAcc;
     private long eventcounter = 0;
     private long[] startTimeTouch = {0, 0};
-    private long[] timeDiffTouch = {0, 0};
+    private long[] pointerDownTime = {0, 0};
+    private long timeBetweenTouchEvents = 0;
+    private long timestampLastEvent = 0;
 
     private int[] touchCoordinates = {0, 0};
     private int touch = 0;
@@ -139,12 +140,17 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
         }
         if (eventcounter % 2 == 0) {
             //write to stream
+            //touch marks the initial touch down of a finger and is cleared once its printed
+            //to track the
             writeBuffer(timediffGyro + ", " + gyroscopeXYZ[0] + ", " + gyroscopeXYZ[1] + ", " + gyroscopeXYZ[2] + ", " +
                     timediffACC + ", " + accelerometerXYZ[0] + ", " + accelerometerXYZ[1] + ", " + accelerometerXYZ[2] + ", " +
                     touch + ", " + touchCoordinates[0] + ", " + touchCoordinates[1] + ", " +
-                    trackedID[0] + ", " + trackedID[1] + "\n");
+                    trackedID[0] + ", " + trackedID[1] + ", " + pointerDownTime[0] + ", " + pointerDownTime[1] + ", " + timeBetweenTouchEvents + "\n");
             touchCoordinates[0] = 0;
             touchCoordinates[1] = 0;
+            pointerDownTime[0] = 0;
+            pointerDownTime[1] = 0;
+            timeBetweenTouchEvents = 0;
             touch = 0;
         }
     }
@@ -165,22 +171,13 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
             if (maskedAction == MotionEvent.ACTION_DOWN || maskedAction == MotionEvent.ACTION_POINTER_DOWN) {
                 touch = 1;
                 touchCounter += 1;
+                //measure time between this event and the last touch event
+                if (maskedAction == MotionEvent.ACTION_DOWN) timeBetweenTouchEvents = System.nanoTime() - timestampLastEvent;
+                else if (maskedAction == MotionEvent.ACTION_POINTER_DOWN) timestampLastEvent = System. nanoTime();
+
                 if(maskedAction == MotionEvent.ACTION_POINTER_DOWN) pointerCounter += 1;
                 touchCoordinates[0] = (int) event.getX(actionIndex);
                 touchCoordinates[1] = (int) event.getY(actionIndex);
-
-                //measure time of touch
-                if(startTimeTouch[0] != 0){
-                    if(startTimeTouch[1] != 0) {
-                        Log.e("TAG", "Encountered third start time while tracking already two - too many fingers on the screen!!");
-                        appendToMsgBuffer("ERROR - Encountered third start time while tracking already two - too many fingers on the screen!!");
-                        finishActivity();
-                    } else {
-                        startTimeTouch[1] = System.nanoTime();
-                    }
-                } else {
-                    startTimeTouch[0] = System.nanoTime();
-                }
 
                 textViewTapCounter.setText("" + touchCounter);
                 Log.d("TAG", "X " + touchCoordinates[0] + " Y " + touchCoordinates[1] + " " + touch + " ID: " + actionID);
@@ -192,19 +189,24 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
                         finishActivity();
                     } else {
                         trackedID[1] = actionID;
+                        startTimeTouch[1] = System.nanoTime();
                     }
                 } else {
                     trackedID[0] = actionID;
+                    startTimeTouch[1] = System.nanoTime();
                 }
             } else if (maskedAction == MotionEvent.ACTION_UP || maskedAction == MotionEvent.ACTION_POINTER_UP) { //ACTION_UP gets fired when the final pointer is released
-                //calculate duration of touch
-
+                //measure time between this event and the last touch event
+                if (maskedAction == MotionEvent.ACTION_UP) timestampLastEvent = System.nanoTime();
+                else if (maskedAction == MotionEvent.ACTION_POINTER_UP) timeBetweenTouchEvents =  timestampLastEvent - System.nanoTime(); //negative value indicating overlap
 
                 //find the actionID and remove it
                 if (trackedID[0] == actionID) {
                     trackedID[0] = -1;
+                    pointerDownTime[0] = System.nanoTime() - startTimeTouch[0];
                 } else if (trackedID[1] == actionID) {
                     trackedID[1] = -1;
+                    pointerDownTime[1] = System.nanoTime() - startTimeTouch[1];
                 } else {
                     Log.e("ERROR", "Could not find action ID among the tracked IDs, something went wrong here");
                     appendToMsgBuffer("ERROR - Could not find action ID among the tracked IDs");
@@ -318,14 +320,13 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
         //create new Intent for console message
 
         appendToMsgBuffer("Statistics of the last recording:");
-        appendToMsgBuffer(touchCounter + " touch events");
-        appendToMsgBuffer(eventcounter + " sensor events");
-        appendToMsgBuffer(moveActionCounter + " moveAction events");
-        appendToMsgBuffer(pointerCounter + " overlapping touch events");
+        appendToMsgBuffer("-" + touchCounter + " touch events");
+        appendToMsgBuffer("-" + eventcounter + " sensor events");
+        appendToMsgBuffer("-" + moveActionCounter + " moveAction events");
+        appendToMsgBuffer("-" + pointerCounter + " overlapping touch events");
         closeFileStream();
         final Intent data = new Intent();
         data.putExtra(CONSOLE_MSG, ConMessageBuffer);
-        //TODO probably the setresult should be called before finish!
         setResult(Activity.RESULT_OK, data);
         finish();
     }
