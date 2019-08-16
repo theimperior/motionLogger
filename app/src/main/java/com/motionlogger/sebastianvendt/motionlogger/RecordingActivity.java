@@ -193,7 +193,7 @@ public class RecordingActivity extends AppCompatActivity implements SensorEventL
                     }
                 } else {
                     trackedID[0] = actionID;
-                    startTimeTouch[1] = System.nanoTime();
+                    startTimeTouch[0] = System.nanoTime();
                 }
             } else if (maskedAction == MotionEvent.ACTION_UP || maskedAction == MotionEvent.ACTION_POINTER_UP) { //ACTION_UP gets fired when the final pointer is released
                 //measure time between this event and the last touch event
