@@ -1,3 +1,4 @@
+
 """
 Author: Sebastian Vendt, University of Ulm
 
@@ -33,7 +34,8 @@ const usegpu = true
 const printout_interval = 5
 const save_interval = 25
 const time_format = "HH:MM:SS"
-data_size = (50, 1) # MNIST is using 28, 28
+const date_format = "dd_mm_yyyy"
+data_size = (50, 1)
 
 # ARCHITECTURE
 inputDense1
@@ -47,15 +49,27 @@ dataset_folderpath = "../MATLAB/TrainingData/"
 const model_save_location = "../trainedModels/"
 const log_save_location = "../logs/"
 
+if usegpu
+    using CuArrays
+end
+
+debug_str = ""
+@debug begin
+	global debug_str
+	debug_str = "DEBUG_"
+	"------DEBUGGING ACTIVATED------"
+end
+
+io = nothing
 
 function adapt_learnrate(epoch_idx)
     return init_learning_rate * decay_rate^(epoch_idx / decay_step)
 end
 
-
-if usegpu
-    using CuArrays
+function load_dataset(dataset_name)
 end
+
+
 
 
 model = Chain(
@@ -70,5 +84,4 @@ model = Chain(
 	Dense(inputDense2, inputDense3, σ),
 	Dense(inputDense3, classes) # identity to output coordinates!
 )
-
 

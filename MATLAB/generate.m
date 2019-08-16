@@ -1,9 +1,9 @@
 % One need to determine the framesize and frameoffset beforehand...
-framesize = 50;
+framesize = 48;
 frameoffset = 25;
 maxFrameShift = 10;
 splitRatio = [70, 20, 10]; % percentage of training, validation, testing needs to add up to 100!!!
-file = '2019_08_08_1256';
+file = '2019_08_16_1856';
 filepointer = csvread(strcat('AppData/', file, '.csv'), 2, 0);
 % get the training data and the labels
 [dataset, lbls] = generateTrainingDataFromCSV(filepointer, framesize, frameoffset, maxFrameShift);
@@ -29,10 +29,10 @@ maxACC = [max(dataset(:,:,4)')', max(dataset(:,:,5)')', max(dataset(:,:,6)')'];
 fig1 = figure;
 % TODO Something is still wrong with these times...
 histogram(pointerDownTimes ./ 1000000) % Divide from ns to ms 
-title('Histogram of the Duriation of touch events')
+title('Histogram of the Duriation of touch events in ms')
 fig2 = figure;
 histogram(TimeBetweenTouchEvents ./ 1000000) % Divide from ns to ms
-title('Histogram of the time between sequential touch events')
+title('Histogram of the time between sequential touch events in ms')
 fig3 = figure;
 subplot(2,3,1)
 nbins = 10;

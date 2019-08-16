@@ -63,8 +63,8 @@ function make_batch(filepath, filenames...; batch_size=100, normalize_data=true,
 	# size(data) = (50, 6, 1, N)
     data = permutedims(data, (1, 2, 4, 3))
 
-    @debug("Dimension of data $(size(data, 1)) x $(size(data, 2)) x $(size(data, 3)) x $(size(data, 4))")
-    @debug("Dimension of binary targets $(size(bin_targets)) x $(size(bin_targets))")
+    @debug("Dimension of data $(size(data))")
+    @debug("Dimension of binary targets $(size(labels))")
     
     
     if(normalize_data)
@@ -81,7 +81,6 @@ function make_batch(filepath, filenames...; batch_size=100, normalize_data=true,
 	 if ( batch_size == -1 ) 
 	    batch_size = size(data, 4)
 	 end
-    @debug("Creating batches")
     idxsets = partition(1:size(data, 4), batch_size)
     data_set = [make_minibatch(data, labels, i) for i in idxsets];
     
@@ -93,7 +92,7 @@ normalize input images along the batch and channel dimension
 input should have standart flux order: Widht x height x channels x batchsize
 if truncate is set to true the last 1% beyond 2.576 sigma will be clipped to 2.576 sigma
 """
-function normalize!(data; truncate=false)
+function normalize!(data, truncate)
 	mean_data = mean(data, dims=4)
     std_data = std(data, mean=mean_data, dims=4)
 	
