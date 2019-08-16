@@ -35,13 +35,12 @@ const printout_interval = 5
 const save_interval = 25
 const time_format = "HH:MM:SS"
 const date_format = "dd_mm_yyyy"
-data_size = (50, 1)
+data_size = (48, 6) # resulting in a 240ms frame
 
 # ARCHITECTURE
-inputDense1
-inputDense2
-inputDense3
-classes = 2
+inputDense1 = 
+inputDense2 = 
+inputDense3 = 
 # enter the datasets and models you want to train
 
 dataset_folderpath = "../MATLAB/TrainingData/"
@@ -67,8 +66,9 @@ function adapt_learnrate(epoch_idx)
 end
 
 function load_dataset(dataset_name)
-end
 
+
+end
 
 
 
@@ -82,6 +82,6 @@ model = Chain(
 	flatten, 
 	Dense(inputDense1, inputDense2, σ),
 	Dense(inputDense2, inputDense3, σ),
-	Dense(inputDense3, classes) # identity to output coordinates!
+	Dense(inputDense3, 2) # identity to output coordinates!
 )
 
