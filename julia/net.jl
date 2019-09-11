@@ -51,7 +51,7 @@ const batch_size = 100
 const momentum = 0.9f0
 const lambda = 0.0005f0
 learning_rate = parsed_args["learn"]
-validate = parse_args["eval"]
+validate = parsed_args["eval"]
 const epochs = parsed_args["epochs"]
 const decay_rate = 0.1f0
 const decay_step = 40
@@ -66,23 +66,23 @@ data_size = (48, 6) # resulting in a 240ms frame
 channels = 1
 features1 = 32
 features2 = 64
-features3 = 256 # needs to find the relation between the axis which represents the screen position 
+features3 = 128 # needs to find the relation between the axis which represents the screen position 
 kernel1 = (3,1)  # convolute only horizontally
 kernel2 = kernel1  # same here
 kernel3 = (3, 6) # this should convolute all 6 rows together to map relations between the channels  
 pooldims1 = (2,1)# (24,6)
 pooldims2 = (2,1)# (12,6)
 # pooldims3 = (2,1)# (1, 4)
-inputDense1 = prod(data_size .÷ pooldims1 .÷ pooldims2 .÷ kernel3) * features3
+inputDense1 = 1280 # prod(data_size .÷ pooldims1 .÷ pooldims2 .÷ kernel3) * features3
 inputDense2 = 500
-inputDense3 = 500
+inputDense3 = 300
 dropout_rate = 0.1f0
 
 dataset_folderpath = "../MATLAB/TrainingData/"
 dataset_name = "2019_09_09_1658"
 
 const model_save_location = "../trainedModels/"
-const log_save_location = "../logs/"
+const log_save_location = "./logs/"
 
 if usegpu
     using CuArrays
@@ -129,30 +129,32 @@ model = Chain(
 	Conv(kernel3, features2=>features3, relu),
 	# MaxPool(),
 	flatten, 
-	Dense(inputDense1, inputDense2, σ),
-	Dropout(dropout_rate)
-	Dense(inputDense2, inputDense3, σ),
-	Dropout(dropout_rate)
-	Dense(inputDense3, 2) # identity to output coordinates!
+	Dense(inputDense1, inputDense2, relu),
+	Dropout(dropout_rate),
+	Dense(inputDense2, inputDense3, relu),
+	Dropout(dropout_rate),
+	Dense(inputDense3, 2), # identity to output coordinates!
 )
 
-train_model(model, train_set, validation_set, test_set)
+function train_model(model, train_set, validation_set, test_set)
+   Flux.testmode!(model, true)
 	opt = Momentum(learning_rate, momentum)
 	if(validate) @tprintf(io, "INIT with Loss(val_set): %f\n", loss(validation_set)) 
 	else @tprintf(io, "INIT with Loss(test_set): %f\n", loss(test_set)) end
 	
-	 
     for i in 1:epochs
 		flush(io)
+        Flux.testmode!(model, false) # bring model in training mode
         Flux.train!(loss, params(model), train_set, opt)
         opt.eta = adapt_learnrate(i)
         if ( rem(i, printout_interval) == 0 ) 
+         Flux.testmode!(model, true)
 			@tprintf(io, "Epoch %3d: Loss: %f\n", i, loss(train_set)) 
 		end 
     end
-	
+	Flux.testmode!(model, true)
 	if(validate) @tprintf(io, "FINAL Loss(val_set): %f\n", loss(validation_set)) 
-	else @tprintf(io, "FINAL Loss(test_set): %f\n", loss(test_set)) 
+	else @tprintf(io, "FINAL Loss(test_set): %f\n", loss(test_set)) end
 end
 
 # logging framework 
