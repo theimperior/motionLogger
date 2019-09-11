@@ -23,7 +23,7 @@ macro tprintf(args...)
     else
         (length(args) >= 2 && (isa(args[2], AbstractString) || is_str_expr(args[2]))) ||
             throw(ArgumentError("@printf: first or second argument must be a format string"))
-        _printf("@printf", esc(args[1]), "[$(Dates.format(now(), time_format))]$(args[2])", args[3:end])
+        _printf("@printf", esc(args[1]), "[$(Dates.format(now(), time_format))] $(args[2])", args[3:end])
     end
 end
 
