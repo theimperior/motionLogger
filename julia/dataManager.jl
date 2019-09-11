@@ -38,8 +38,8 @@ Structure of the .mat file:
 where N denotes the number of samples, 50 is the window size and 6 are the number of channels
 """
 function make_batch(filepath, filenames...; batch_size=100, normalize_data=true, truncate_data=false)
-    data = Array{Float64}(undef, 0)
-    labels = Array{Float64}(undef, 0)
+    data = nothing # Array{Float64}(undef, 0)
+    labels = nothing # Array{Float64}(undef, 0)
     for (i, filename) in enumerate(filenames)
         # load the data from the mat file
         file = "$filepath$filename"
@@ -50,10 +50,11 @@ function make_batch(filepath, filenames...; batch_size=100, normalize_data=true,
         # size(bin_targets) = (N, 10)
         labelsPart = read(matfile, "labels")
         close(matfile) 
-
+        if (isnothing(data)) data = dataPart; labels = labelsPart;
+        else
         data = cat(dims=3, data, dataPart)
         labels = cat(dims=2, labels, labelsPart)   
-        
+        end
     end
 	
 	# add singleton dimension and permute dims so it matches the convention of Flux width x height x channels x batchsize(Setsize)   
