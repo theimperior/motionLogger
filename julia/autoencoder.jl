@@ -12,9 +12,8 @@ dataset_folderpath = "../MATLAB/TrainingData/"
 dataset_name = "2019_09_09_1658"
 hidden1 = 150
 hidden2 = 80
-epochs = 50
+epochs = 100
 
-flatten(x) = reshape(x, :, size(x, ndims(x)))
 
 train = make_batch(dataset_folderpath, "$(dataset_name)_TRAIN.mat", normalize_data=false, truncate_data=false)
 val = make_batch(dataset_folderpath, "$(dataset_name)_VAL.mat", normalize_data=false, truncate_data=false)
@@ -41,13 +40,32 @@ model = Chain(
 model = model |> gpu
 
 loss(x, y) = Flux.mse(model(x), flatten(x))
-loss(x) = Flux.mse(model(x), flatten(x))
 
-opt = ADAM()
 
+function loss(dataset)
+   loss_val = 0.0f0
+   for (data, labels) in dataset
+      loss_val += loss(data, labels)
+   end
+   return loss_val / length(dataset)
+end
+
+const moment = 0.9f0
+const decay_rate = 0.1f0
+const decay_step = 40
+const init_learning_rate = 0.3f0
+
+function adapt_learnrate(epoch_idx)
+    return init_learning_rate * decay_rate^(epoch_idx / decay_step)
+end
+
+opt = Momentum(init_learning_rate, moment)
+
+@tprintf("INIT: Loss: %f\n", loss(train))
 for i in 1:epochs
 	Flux.train!(loss, params(model), train, opt)
-	@tprintf("Epoch %i: Loss: %f\n", i, loss(train[1][1]))
+	@tprintf("Epoch %i: Loss: %f\n", i, loss(train))
+	opt.eta = adapt_learnrate(i)
 end
 
 	
