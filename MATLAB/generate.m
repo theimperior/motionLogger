@@ -1,6 +1,6 @@
 % One need to determine the framesize and frameoffset beforehand...
-framesize = 48;
-frameoffset = 25;
+framesize = 60; % was 48
+frameoffset = 28;
 maxFrameShift = 10;
 splitRatio = [70, 20, 10]; % percentage of training, validation, testing needs to add up to 100!!!
 file = '2019_09_09_1658';

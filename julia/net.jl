@@ -60,7 +60,7 @@ const printout_interval = 5
 const save_interval = 25
 const time_format = "HH:MM:SS"
 const date_format = "dd_mm_yyyy"
-data_size = (48, 6) # resulting in a 240ms frame
+data_size = (60, 6) # resulting in a 300ms frame
 
 # ARCHITECTURE
 channels = 1
@@ -70,13 +70,13 @@ features3 = 128 # needs to find the relation between the axis which represents t
 kernel1 = (3,1)  # convolute only horizontally
 kernel2 = kernel1  # same here
 kernel3 = (3, 6) # this should convolute all 6 rows together to map relations between the channels  
-pooldims1 = (2,1)# (24,6)
-pooldims2 = (2,1)# (12,6)
+pooldims1 = (2,1)# (30,6)
+pooldims2 = (2,1)# (15,6)
 # pooldims3 = (2,1)# (1, 4)
-inputDense1 = 1280 # prod(data_size .÷ pooldims1 .÷ pooldims2 .÷ kernel3) * features3
-inputDense2 = 500
+inputDense1 = 1664 # prod(data_size .÷ pooldims1 .÷ pooldims2 .÷ kernel3) * features3
+inputDense2 = 600
 inputDense3 = 300
-dropout_rate = 0.1f0
+dropout_rate = 0.3f0
 
 dataset_folderpath = "../MATLAB/TrainingData/"
 dataset_name = "2019_09_09_1658"
@@ -103,7 +103,7 @@ end
 
 function loss(x, y) 
 	# quadratic euclidean distance + parameternorm?
-	return Flux.mse(model(x), y)
+	return Flux.mse(model(x), y) + lambda * sum(norm, params(model))
 end
 
 function loss(dataset)
