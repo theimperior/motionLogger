@@ -5,6 +5,11 @@ using Base.Iterators: repeated, partition
 using Statistics
 using Flux.Data.MNIST
 using Flux:onehotbatch
+
+# dimension of coordinates (labels): (x, y)
+lbls_dims = (1080, 980)
+lbls_offset = (0, 699)
+
 """
 	make_minibatch(X, Y, idxset)
 	
@@ -24,7 +29,7 @@ function make_minibatch(X, Y, idxset)
 end
 
 """
-    make_batch(filepath, batch_size=100, normalize=true)
+    make_batch(filepath, filenames...; batch_size=100, normalize_data=true, truncate_data=false)
     
 Creates batches with size batch_size(default 100) from filenames at given filepath. Images will be normalized if normalize is set (default true). 
 If batch_size equals -1 the batch size will be the size of the dataset
@@ -33,7 +38,7 @@ Structure of the .mat file:
     fieldname | size
     ----------------
        data   | 50 x 6 x N
-  bin_targets | 2 x N
+  bin_targets | 2 x N (1: x, 2: y)
 
 where N denotes the number of samples, 50 is the window size and 6 are the number of channels
 """
@@ -59,6 +64,9 @@ function make_batch(filepath, filenames...; batch_size=100, normalize_data=true,
 	
 	# add singleton dimension and permute dims so it matches the convention of Flux width x height x channels x batchsize(Setsize)   
 	data = cat(dims=4, data)
+	
+	# normalize the labels 
+	labels = (labels .- lbls_offset) ./ lbls_dims
 
     # rearrange the data array 
 	# size(data) = (50, 6, 1, N)

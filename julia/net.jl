@@ -139,8 +139,8 @@ model = Chain(
 function train_model(model, train_set, validation_set, test_set)
    Flux.testmode!(model, true)
 	opt = Momentum(learning_rate, momentum)
-	if(validate) @tprintf(io, "INIT with Loss(val_set): %f\n", loss(validation_set)) 
-	else @tprintf(io, "INIT with Loss(test_set): %f\n", loss(test_set)) end
+	if(validate) tprintf(io, "INIT with Loss(val_set): %f\n", loss(validation_set)) 
+	else tprintf(io, "INIT with Loss(test_set): %f\n", loss(test_set)) end
 	
     for i in 1:epochs
 		flush(io)
@@ -149,12 +149,12 @@ function train_model(model, train_set, validation_set, test_set)
         opt.eta = adapt_learnrate(i)
         if ( rem(i, printout_interval) == 0 ) 
          Flux.testmode!(model, true)
-			@tprintf(io, "Epoch %3d: Loss: %f\n", i, loss(train_set)) 
+			tprintf(io, "Epoch %3d: Loss: %f\n", i, loss(train_set)) 
 		end 
     end
 	Flux.testmode!(model, true)
-	if(validate) @tprintf(io, "FINAL Loss(val_set): %f\n", loss(validation_set)) 
-	else @tprintf(io, "FINAL Loss(test_set): %f\n", loss(test_set)) end
+	if(validate) tprintf(io, "FINAL Loss(val_set): %f\n", loss(validation_set)) 
+	else tprintf(io, "FINAL Loss(test_set): %f\n", loss(test_set)) end
 end
 
 # logging framework 
