@@ -97,7 +97,7 @@ end
 
 debug_str = ""
 log_msg = parsed_args["logmsg"]
-csv_out = parse_args["csv"]
+csv_out = parsed_args["csv"]
 @debug begin
 	global debug_str
 	debug_str = "DEBUG_"
@@ -108,7 +108,7 @@ io = nothing
 io_csv = nothing
 
 function adapt_learnrate(epoch_idx)
-    return init_learning_rate * decay_rate^(epoch_idx / decay_step)
+    return learning_rate * decay_rate^(epoch_idx / decay_step)
 end
 
 function loss(x, y) 
@@ -202,12 +202,12 @@ end
 flush(io)
 flush(Base.stdout)
 
-train_set, validation_set, test_set = load_dataset()
+train, validation, test = load_dataset()
 
 if (usegpu)
-	train_set = gpu.(train_set)
-	validation_set = gpu.(validation_set)
-	test_set = gpu.(test_set)
+	train_set = gpu.(train)
+	validation_set = gpu.(validation)
+	test_set = gpu.(test)
 	model = gpu(model)
 end
 

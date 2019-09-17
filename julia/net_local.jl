@@ -97,7 +97,7 @@ end
 
 debug_str = ""
 log_msg = parsed_args["logmsg"]
-csv_out = parse_args["csv"]
+csv_out = parsed_args["csv"]
 @debug begin
 	global debug_str
 	debug_str = "DEBUG_"
@@ -108,7 +108,7 @@ io = nothing
 io_csv = nothing
 
 function adapt_learnrate(epoch_idx)
-    return init_learning_rate * decay_rate^(epoch_idx / decay_step)
+    return learning_rate * decay_rate^(epoch_idx / decay_step)
 end
 
 function loss(model, x, y) 
