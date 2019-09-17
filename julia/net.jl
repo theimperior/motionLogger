@@ -23,6 +23,10 @@ s = ArgParseSettings()
 		help = "Number of epochs"
 		arg_type = Int64
 		default = 100
+	"--logmsg"
+		help = "additional message describing the training log"
+		arg_type = String
+		default = ""
 end
 parsed_args = parse_args(ARGS, s)
 
@@ -89,6 +93,7 @@ if usegpu
 end
 
 debug_str = ""
+log_msg = parsed_args["logmsg"]
 @debug begin
 	global debug_str
 	debug_str = "DEBUG_"
@@ -163,6 +168,7 @@ io = open(fp, "a+")
 global_logger(SimpleLogger(io)) # for debug outputs
 @printf(Base.stdout, "Logging to File: %s\n", fp)
 @printf(io, "\n--------[%s %s]--------\n", Dates.format(now(), date_format), Dates.format(now(), time_format))
+@printf(io, "%s\n", log_msg)
 # dump configuration 
 @debug begin
 	for symbol in names(Main)
