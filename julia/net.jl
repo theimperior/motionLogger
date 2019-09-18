@@ -154,13 +154,17 @@ function log(model, epoch, use_testset)
 	Flux.testmode!(model, true)
 	
 	if(epoch == 0) # evalutation phase 
-		if(use_testset) @printf(io, "[%s] INIT Loss(test): %f\n", Dates.format(now(), time_format), epoch, loss(model, test_set)) 
-		else @printf(io, "[%s] INIT Loss(val): %f\n", Dates.format(now(), time_format), epoch, loss(model, validation_set)) end
-	else if(epoch == epochs)
-		if(use_testset) @printf(io, "[%s] FINAL Loss(test): %f\n", Dates.format(now(), time_format), epoch, loss(model, test_set)) 
-		else @printf(io, "[%s] FINAL Loss(val): %f\n", Dates.format(now(), time_format), epoch, loss(model, validation_set)) end
+		if(use_testset) @printf(io, "[%s] INIT Loss(test): %f\n", Dates.format(now(), time_format), loss(model, test_set)) 
+		else @printf(io, "[%s] INIT Loss(val): %f\n", Dates.format(now(), time_format), loss(model, validation_set)) end
+	elseif(epoch == epochs)
+      @printf(io, "[%s] Epoch %3d: Loss(train): %f Loss(val): %f\n", Dates.format(now(), time_format), epoch, loss(model, train_set), loss(model, validation_set))
+		if(use_testset) 
+		   @printf(io, "[%s] FINAL(%d) Loss(test): %f\n", Dates.format(now(), time_format), epoch, loss(model, test_set)) 
+		else 
+		   @printf(io, "[%s] FINAL(%d) Loss(val): %f\n", Dates.format(now(), time_format), epoch, loss(model, validation_set)) 
+	   end
 	else # learning phase
-		if (rem(i, printout_interval) == 0) 
+		if (rem(epoch, printout_interval) == 0) 
 			@printf(io, "[%s] Epoch %3d: Loss(train): %f Loss(val): %f\n", Dates.format(now(), time_format), epoch, loss(model, train_set), loss(model, validation_set)) 
 		end
 	end
@@ -186,18 +190,21 @@ function train_model()
         Flux.train!((x, y) -> loss(model, x, y), params(model), train_set, opt)
         opt.eta = adapt_learnrate(i)
 		log_csv(model, i)
-		log(model, i, false)
+		log(model, i, !validate)
 		
 		# early stopping
 		curr_loss = loss(model, train_set)
 		if(abs(last_loss - curr_loss) < delta)
-			@printf(io, "Early stopping at %d", curr_loss)
-			return
+			@printf(io, "Early stopping with %f at %d", curr_loss, i)
+			Flux.testmode!(model, true)
+			if (validate) return loss(model, validation_set)
+			else return loss(model, test_set) end
 		end
 		last_loss = curr_loss
-		
     end
-	log(model, epochs, !validate)
+    Flux.testmode!(model, true)
+    if (validate) return loss(model, validation_set)
+    else return loss(model, test_set) end
 end
 
 function random_search()
@@ -214,7 +221,7 @@ function random_search()
 		# printf configuration
 		config1 = "momentum$(momentum), features=$(features), dropout_rate=$(dropout_rate)"
 		config2 = "kernel=$(kernel), pooldims=$(pooldims), learning_rate=$(learning_rate)"
-		@printf(io, "Search %d of %d\n", search, 500)
+		@printf(io, "\nSearch %d of %d\n", search, 500)
 		@printf(io, "%s\n", config1)
 		@printf(io, "%s\n\n", config2)
 		
@@ -259,7 +266,3 @@ end
 
 if(!runD) random_search()
 else train_model() end
-
-
-
-
