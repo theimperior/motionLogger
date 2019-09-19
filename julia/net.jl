@@ -18,7 +18,7 @@ s = ArgParseSettings()
     "--epochs" 
 		help = "Number of epochs"
 		arg_type = Int64
-		default = 30
+		default = 40
 	"--logmsg"
 		help = "additional message describing the training log"
 		arg_type = String
@@ -31,8 +31,6 @@ s = ArgParseSettings()
 		action = :store_true
 end
 parsed_args = parse_args(ARGS, s)
-
-
 
 using Flux, Statistics
 using Flux: onecold
@@ -49,7 +47,6 @@ using Logging
 using Random
 import LinearAlgebra: norm
 norm(x::TrackedArray{T}) where T = sqrt(sum(abs2.(x)) + eps(T)) 
-
 
 ######################
 # PARAMETERS
@@ -74,11 +71,13 @@ channels = 1
 features = [32, 64, 128] # needs to find the relation between the axis which represents the screen position 
 kernel = [(3,1), (3,1), (3,6)]  # convolute only horizontally, last should convolute all 6 rows together to map relations between the channels  
 pooldims = [(2,1), (2,1)]# (30,6) -> (15,6)
-inputDense = [1664, 600, 300] # prod(data_size .÷ pooldims1 .÷ pooldims2 .÷ kernel3) * features3
+# formula for calculating output dimensions of convolution: 
+# dim1 = ((dim1 - Filtersize + 2 * padding) / stride) + 1
+inputDense = [1664, 600, 300] # prod((data_size .÷ pooldims[1] .÷ pooldims[2]) .- kernel[3] .+ 1) * features[3]
 dropout_rate = 0.3f0
 
 # random search values
-rs_momentum = [0.9, 0.92, 0.94, 0.96, 0.98]
+rs_momentum = [0.9, 0.92, 0.94, 0.96, 0.98, 0.99]
 rs_features = [[32, 64, 128], [64, 64, 64], [32, 32, 32], [96, 192, 192]]
 rs_dropout_rate = [0.1, 0.3, 0.4, 0.6, 0.8]
 rs_kernel = [[(3,1), (3,1), (3,6)], [(5,1), (5,1), (3,6)], [(7,1), (7,1), (3,6)], [(3,1), (3,1), (2,6)], [(5,1), (5,1), (2,6)], [(7,1), (7,1), (2,6)], 
@@ -100,17 +99,25 @@ debug_str = ""
 log_msg = parsed_args["logmsg"]
 csv_out = parsed_args["csv"]
 runD = parsed_args["runD"]
+io = nothing
+io_csv = nothing
 @debug begin
 	global debug_str
 	debug_str = "DEBUG_"
 	"------DEBUGGING ACTIVATED------"
 end
 
-io = nothing
-io_csv = nothing
-
 function adapt_learnrate(epoch_idx)
     return learning_rate * decay_rate^(epoch_idx / decay_step)
+end
+
+function accuracy (model, x, y)
+	y_hat = model(x)
+	return mean(mapslices(button_number, y_hat, dims=1) .== mapslices(button_number, y, dims=1))
+end
+
+function button_number(X)
+	return (X[1] * 1080) ÷ 360 + 3 * ((X[2] * 980) ÷ 245)
 end
 
 function loss(model, x, y) 
@@ -142,7 +149,7 @@ function create_model()
 		Conv(kernel[3], features[2]=>features[3], relu),
 		# MaxPool(),
 		flatten, 
-		Dense(inputDense[1], inputDense[2], relu),
+		Dense(prod((data_size .÷ pooldims[1] .÷ pooldims[2]) .- kernel[3] .+ 1) * features[3], inputDense[2], relu),
 		Dropout(dropout_rate),
 		Dense(inputDense[2], inputDense[3], relu),
 		Dropout(dropout_rate),
@@ -154,14 +161,14 @@ function log(model, epoch, use_testset)
 	Flux.testmode!(model, true)
 	
 	if(epoch == 0) # evalutation phase 
-		if(use_testset) @printf(io, "[%s] INIT Loss(test): %f\n", Dates.format(now(), time_format), loss(model, test_set)) 
-		else @printf(io, "[%s] INIT Loss(val): %f\n", Dates.format(now(), time_format), loss(model, validation_set)) end
+		if(use_testset) @printf(io, "[%s] INIT Loss(test): f% Accuarcy: %f\n", Dates.format(now(), time_format), loss(model, test_set), accuracy(model, test_set) 
+		else @printf(io, "[%s] INIT Loss(val): %f Accuarcy: %f\n", Dates.format(now(), time_format), loss(model, validation_set), accuracy(model, validation_set)) end
 	elseif(epoch == epochs)
-      @printf(io, "[%s] Epoch %3d: Loss(train): %f Loss(val): %f\n", Dates.format(now(), time_format), epoch, loss(model, train_set), loss(model, validation_set))
+        @printf(io, "[%s] Epoch %3d: Loss(train): %f Loss(val): %f\n", Dates.format(now(), time_format), epoch, loss(model, train_set), loss(model, validation_set))
 		if(use_testset) 
-		   @printf(io, "[%s] FINAL(%d) Loss(test): %f\n", Dates.format(now(), time_format), epoch, loss(model, test_set)) 
+		   @printf(io, "[%s] FINAL(%d) Loss(test): %f Accuarcy: %f\n", Dates.format(now(), time_format), epoch, loss(model, test_set), accuracy(model, test_set)) 
 		else 
-		   @printf(io, "[%s] FINAL(%d) Loss(val): %f\n", Dates.format(now(), time_format), epoch, loss(model, validation_set)) 
+		   @printf(io, "[%s] FINAL(%d) Loss(val): %f Accuarcy: %f\n", Dates.format(now(), time_format), epoch, loss(model, validation_set), accuracy(model, validation_set)) 
 	   end
 	else # learning phase
 		if (rem(epoch, printout_interval) == 0) 
@@ -180,8 +187,8 @@ end
 
 function eval_model(model)
 	Flux.testmode!(model, true)
-	if (validate) return loss(model, validation_set)
-	else return loss(model, test_set) end
+	if (validate) return (loss(model, validation_set), accuracy(model, validation_set))
+	else return (loss(model, test_set), accuracy(model, test_set)) end
 end
 
 function train_model()
@@ -228,8 +235,8 @@ function random_search()
 		@printf(io, "%s\n", config1)
 		@printf(io, "%s\n\n", config2)
 		
-		loss = train_model()
-		push!(results, (search, loss))
+		(loss, accuracy) = train_model()
+		push!(results, (search, loss, accuracy))
 	end
 	return results
 end
@@ -273,4 +280,18 @@ if(!runD)
 	results = random_search()
 	BSON.@save "results.bson" results
 	#TODO sort and print best 5-10 results 
-else train_model() end
+	sort!(results, by = x -> x[2])
+	# print results 
+	@printf("Best results by Loss:\n")
+	for idx in 1:5 
+		@printf("#%d: Loss %f, accuracy %f in Search: %d ", idx, results[idx][2], results[idx][3], results[idx][1])
+	end
+	
+	sort!(results, by = x -> x[3])
+	@printf("Best results by Accuarcy:\n")
+	for idx in 1:5 
+		@printf("#%d: Accuarcy: %f, Loss %f in Search: %d ", idx, results[idx][3], results[idx][2], results[idx][1])
+	end
+else 
+	train_model() 
+end
