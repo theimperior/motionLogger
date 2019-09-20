@@ -15,14 +15,10 @@ s = ArgParseSettings()
 	"--eval"
 		help = "set, if you want to validate instead of test after training"
 		action = :store_true
-    "--learn"
-        help = "learning rate"
-		arg_type = Float32
-		default = 0.1f0
     "--epochs" 
 		help = "Number of epochs"
 		arg_type = Int64
-		default = 100
+		default = 40
 	"--logmsg"
 		help = "additional message describing the training log"
 		arg_type = String
@@ -30,10 +26,11 @@ s = ArgParseSettings()
 	"--csv"
 		help = "set, if you additionally want a csv output of the learning process"
 		action = :store_true
+	"--runD"
+		help = "set, if you want to run the default config"
+		action = :store_true
 end
 parsed_args = parse_args(ARGS, s)
-
-
 
 using Flux, Statistics
 using Flux: onecold
@@ -47,43 +44,46 @@ include("./verbose.jl")
 using .dataManager: make_batch
 using .verbose
 using Logging
+using Random
 import LinearAlgebra: norm
 norm(x::TrackedArray{T}) where T = sqrt(sum(abs2.(x)) + eps(T)) 
-
 
 ######################
 # PARAMETERS
 ######################
 const batch_size = 100
-const momentum = 0.9f0
+momentum = 0.9f0
 const lambda = 0.0005f0
-learning_rate = parsed_args["learn"]
+const delta = 0.00001
+learning_rate = 0.1f0
 validate = parsed_args["eval"]
 const epochs = parsed_args["epochs"]
 const decay_rate = 0.1f0
 const decay_step = 40
 const usegpu = parsed_args["gpu"]
-const printout_interval = 5
-const save_interval = 25
+const printout_interval = 2
 const time_format = "HH:MM:SS"
 const date_format = "dd_mm_yyyy"
 data_size = (60, 6) # resulting in a 300ms frame
 
-# ARCHITECTURE
+# DEFAULT ARCHITECTURE
 channels = 1
-features1 = 32
-features2 = 64
-features3 = 128 # needs to find the relation between the axis which represents the screen position 
-kernel1 = (3,1)  # convolute only horizontally
-kernel2 = kernel1  # same here
-kernel3 = (3, 6) # this should convolute all 6 rows together to map relations between the channels  
-pooldims1 = (2,1)# (30,6)
-pooldims2 = (2,1)# (15,6)
-# pooldims3 = (2,1)# (1, 4)
-inputDense1 = 1664 # prod(data_size .÷ pooldims1 .÷ pooldims2 .÷ kernel3) * features3
-inputDense2 = 600
-inputDense3 = 300
+features = [96, 192, 192] # needs to find the relation between the axis which represents the screen position 
+kernel = [(7,1), (7,1), (3,6)]  # convolute only horizontally, last should convolute all 6 rows together to map relations between the channels  
+pooldims = [(2,1), (2,1)]# (30,6) -> (15,6)
+# formula for calculating output dimensions of convolution: 
+# dim1 = ((dim1 - Filtersize + 2 * padding) / stride) + 1
+inputDense = [1664, 600, 300] # prod((data_size .÷ pooldims[1] .÷ pooldims[2]) .- kernel[3] .+ 1) * features[3]
 dropout_rate = 0.3f0
+
+# random search values
+rs_momentum = [0.9, 0.92, 0.94, 0.96, 0.98, 0.99]
+rs_features = [[32, 64, 128], [64, 64, 64], [32, 32, 32], [96, 192, 192]]
+rs_dropout_rate = [0.1, 0.3, 0.4, 0.6, 0.8]
+rs_kernel = [[(3,1), (3,1), (3,6)], [(5,1), (5,1), (3,6)], [(7,1), (7,1), (3,6)], [(3,1), (3,1), (2,6)], [(5,1), (5,1), (2,6)], [(7,1), (7,1), (2,6)], 
+				[(7,1), (5,1), (2,6)], [(7,1), (5,1), (3,6)], [(5,1), (3,1), (2,6)], [(5,1), (3,1), (3,6)]]
+rs_pooldims = [[(2,1), (2,1)], [(3,1), (3,1)]]
+rs_learning_rate = [1, 0.3, 0.1, 0.03, 0.01, 0.003, 0.001]
 
 dataset_folderpath = "../MATLAB/TrainingData/"
 dataset_name = "2019_09_09_1658"
@@ -98,17 +98,34 @@ end
 debug_str = ""
 log_msg = parsed_args["logmsg"]
 csv_out = parsed_args["csv"]
+runD = parsed_args["runD"]
+io = nothing
+io_csv = nothing
 @debug begin
 	global debug_str
 	debug_str = "DEBUG_"
 	"------DEBUGGING ACTIVATED------"
 end
 
-io = nothing
-io_csv = nothing
-
 function adapt_learnrate(epoch_idx)
     return learning_rate * decay_rate^(epoch_idx / decay_step)
+end
+
+function accuracy(model, x, y)
+	y_hat = Tracker.data(model(x))
+	return mean(mapslices(button_number, y_hat, dims=1) .== mapslices(button_number, y, dims=1))
+end
+
+function accuracy(model, dataset)
+   acc = 0.0f0
+   for (data, labels) in dataset
+      acc += accuracy(model, data, labels)
+   end
+   return acc / length(dataset)
+end
+
+function button_number(X)
+	return Tracker.data(X[1] * 1080) ÷ 360 + 3 * (Tracker.data(X[2] * 980) ÷ 245)
 end
 
 function loss(model, x, y) 
@@ -133,53 +150,105 @@ end
 
 function create_model()
 	return Chain(
-		Conv(kernel1, channels=>features1, relu, pad=map(x -> x ÷ 2, kernel1)),
-		MaxPool(pooldims1, stride=pooldims1), 
-		Conv(kernel2, features1=>features2, relu, pad=map(x -> x ÷ 2, kernel2)),
-		MaxPool(pooldims2, stride=pooldims2),
-		Conv(kernel3, features2=>features3, relu),
+		Conv(kernel[1], channels=>features[1], relu, pad=map(x -> x ÷ 2, kernel[1])),
+		MaxPool(pooldims[1], stride=pooldims[1]), 
+		Conv(kernel[2], features[1]=>features[2], relu, pad=map(x -> x ÷ 2, kernel[2])),
+		MaxPool(pooldims[2], stride=pooldims[2]),
+		Conv(kernel[3], features[2]=>features[3], relu),
 		# MaxPool(),
 		flatten, 
-		Dense(inputDense1, inputDense2, relu),
+		Dense(prod((data_size .÷ pooldims[1] .÷ pooldims[2]) .- kernel[3] .+ 1) * features[3], inputDense[2], relu),
 		Dropout(dropout_rate),
-		Dense(inputDense2, inputDense3, relu),
+		Dense(inputDense[2], inputDense[3], relu),
 		Dropout(dropout_rate),
-		Dense(inputDense3, 2, σ), # coordinates between 0 and 1
+		Dense(inputDense[3], 2, σ), # coordinates between 0 and 1
 	)
 end
 
 function log(model, epoch, use_testset)
 	Flux.testmode!(model, true)
 	
-	if(epoch == 0 | epoch == epochs) # evalutation phase 
-		if(use_testset) @printf(io, "[%s] Epoch %3d: Loss(test): %f\n", Dates.format(now(), time_format), epoch, loss(model, test_set)) 
-		else @printf(io, "[%s] Epoch %3d: Loss(val): %f\n", Dates.format(now(), time_format), epoch, loss(model, validation_set)) end
+	if(epoch == 0) # evalutation phase 
+		if(use_testset) @printf(io, "[%s] INIT Loss(test): f% Accuarcy: %f\n", Dates.format(now(), time_format), loss(model, test_set), accuracy(model, test_set)) 
+		else @printf(io, "[%s] INIT Loss(val): %f Accuarcy: %f\n", Dates.format(now(), time_format), loss(model, validation_set), accuracy(model, validation_set)) end
+	elseif(epoch == epochs)
+        @printf(io, "[%s] Epoch %3d: Loss(train): %f Loss(val): %f\n", Dates.format(now(), time_format), epoch, loss(model, train_set), loss(model, validation_set))
+		if(use_testset) 
+		   @printf(io, "[%s] FINAL(%d) Loss(test): %f Accuarcy: %f\n", Dates.format(now(), time_format), epoch, loss(model, test_set), accuracy(model, test_set)) 
+		else 
+		   @printf(io, "[%s] FINAL(%d) Loss(val): %f Accuarcy: %f\n", Dates.format(now(), time_format), epoch, loss(model, validation_set), accuracy(model, validation_set)) 
+	   end
 	else # learning phase
-		 @printf(io, "[%s] Epoch %3d: Loss(train): %f\n", Dates.format(now(), time_format), epoch, loss(model, train_set)) 
+		if (rem(epoch, printout_interval) == 0) 
+			@printf(io, "[%s] Epoch %3d: Loss(train): %f Loss(val): %f\n", Dates.format(now(), time_format), epoch, loss(model, train_set), loss(model, validation_set)) 
+		end
 	end
-	
-	if(csv_out) @printf(io_csv, "%d, %f\n", epoch, loss(model, train_set)) end
-	
+
 	Flux.testmode!(model, false)
+end
+
+function log_csv(model, epoch)
+	Flux.testmode!(model, true)
+	if(csv_out) @printf(io_csv, "%d, %f, %f\n", epoch, loss(model, train_set), loss(model, validation_set)) end
+	Flux.testmode!(model, false)
+end
+
+function eval_model(model)
+	Flux.testmode!(model, true)
+	if (validate) return (loss(model, validation_set), accuracy(model, validation_set))
+	else return (loss(model, test_set), accuracy(model, test_set)) end
 end
 
 function train_model()
 	model = create_model()
-	if(usegpu) model = gpu(model) end
-	
+	if (usegpu) model = gpu(model) end
 	opt = Momentum(learning_rate, momentum)
 	log(model, 0, !validate)
+	Flux.testmode!(model, false) # bring model in training mode
+	last_loss = loss(model, train_set)
     for i in 1:epochs
 		flush(io)
-        Flux.testmode!(model, false) # bring model in training mode
         Flux.train!((x, y) -> loss(model, x, y), params(model), train_set, opt)
         opt.eta = adapt_learnrate(i)
-        if (rem(i, printout_interval) == 0) 
-			log(model, i, false)
-		end 
+		log_csv(model, i)
+		log(model, i, !validate)
+		
+		# early stopping
+		curr_loss = loss(model, train_set)
+		if(abs(last_loss - curr_loss) < delta)
+			@printf(io, "Early stopping with Loss(train) %f at epoch %d (Accuracy: %f)\n", curr_loss, i, accuracy(model, validation_set))
+			return eval_model(model)
+		end
+		last_loss = curr_loss
     end
-	log(model, epochs, !validate)
+    return eval_model(model)
 end
+
+function random_search()
+	rng = MersenneTwister()
+	results = []
+	for search in 1:800
+		# create random set
+		global momentum = rand(rng, rs_momentum)
+		global features = rand(rng, rs_features)
+		global dropout_rate = rand(rng, rs_dropout_rate)
+		global kernel = rand(rng, rs_kernel)
+		global pooldims = rand(rng, rs_pooldims)
+		global learning_rate = rand(rng, rs_learning_rate)
+		
+		# printf configuration
+		config1 = "momentum$(momentum), features=$(features), dropout_rate=$(dropout_rate)"
+		config2 = "kernel=$(kernel), pooldims=$(pooldims), learning_rate=$(learning_rate)"
+		@printf(io, "\nSearch %d of %d\n", search, 500)
+		@printf(io, "%s\n", config1)
+		@printf(io, "%s\n\n", config2)
+		
+		(loss, accuracy) = train_model()
+		push!(results, (search, loss, accuracy))
+	end
+	return results
+end
+
 
 # logging framework 
 fp = "$(log_save_location)$(debug_str)log_$(Dates.format(now(), date_format)).log"
@@ -193,7 +262,7 @@ global_logger(SimpleLogger(io)) # for debug outputs
 if (csv_out)
 	fp_csv = "$(log_save_location)$(debug_str)csv_$(Dates.format(now(), date_format)).csv"
 	io_csv = open(fp_csv, "w+") # read, write, create, truncate
-	@printf(io_csv, "epoch, loss(train)\n")
+	@printf(io_csv, "epoch, loss(train), loss(val)\n")
 end	
 
 # dump configuration 
@@ -207,19 +276,30 @@ end
 flush(io)
 flush(Base.stdout)
 
-train_set, validation_set, test_set = load_dataset()
+train, validation, test = load_dataset()
 
 if (usegpu)
-	train_set = gpu.(train_set)
-	validation_set = gpu.(validation_set)
-	test_set = gpu.(test_set)
+	const train_set = gpu.(train)
+	const validation_set = gpu.(validation)
+	const test_set = gpu.(test)
 end
 
-
-train_model()
-
-
-
-
-
-
+if(!runD)
+	results = random_search()
+	BSON.@save "results.bson" results
+	#TODO sort and print best 5-10 results 
+	sort!(results, by = x -> x[2])
+	# print results 
+	@printf("Best results by Loss:\n")
+	for idx in 1:5 
+		@printf("#%d: Loss %f, accuracy %f in Search: %d\n", idx, results[idx][2], results[idx][3], results[idx][1])
+	end
+	
+	sort!(results, by = x -> x[3], rev=true)
+	@printf("Best results by Accuarcy:\n")
+	for idx in 1:5 
+		@printf("#%d: Accuarcy: %f, Loss %f in Search: %d\n", idx, results[idx][3], results[idx][2], results[idx][1])
+	end
+else 
+	train_model() 
+end

@@ -112,7 +112,7 @@ function adapt_learnrate(epoch_idx)
 end
 
 function accuracy(model, x, y)
-	y_hat = model(x)
+	y_hat = Tracker.data(model(x))
 	return mean(mapslices(button_number, y_hat, dims=1) .== mapslices(button_number, y, dims=1))
 end
 
