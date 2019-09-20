@@ -111,13 +111,21 @@ function adapt_learnrate(epoch_idx)
     return learning_rate * decay_rate^(epoch_idx / decay_step)
 end
 
-function accuracy (model, x, y)
+function accuracy(model, x, y)
 	y_hat = model(x)
 	return mean(mapslices(button_number, y_hat, dims=1) .== mapslices(button_number, y, dims=1))
 end
 
+function accuracy(model, dataset)
+   acc = 0.0f0
+   for (data, labels) in dataset
+      acc += accuracy(model, data, labels)
+   end
+   return acc / length(dataset)
+end
+
 function button_number(X)
-	return (X[1] * 1080) ÷ 360 + 3 * ((X[2] * 980) ÷ 245)
+	return Tracker.data(X[1] * 1080) ÷ 360 + 3 * (Tracker.data(X[2] * 980) ÷ 245)
 end
 
 function loss(model, x, y) 
@@ -161,7 +169,7 @@ function log(model, epoch, use_testset)
 	Flux.testmode!(model, true)
 	
 	if(epoch == 0) # evalutation phase 
-		if(use_testset) @printf(io, "[%s] INIT Loss(test): f% Accuarcy: %f\n", Dates.format(now(), time_format), loss(model, test_set), accuracy(model, test_set) 
+		if(use_testset) @printf(io, "[%s] INIT Loss(test): f% Accuarcy: %f\n", Dates.format(now(), time_format), loss(model, test_set), accuracy(model, test_set)) 
 		else @printf(io, "[%s] INIT Loss(val): %f Accuarcy: %f\n", Dates.format(now(), time_format), loss(model, validation_set), accuracy(model, validation_set)) end
 	elseif(epoch == epochs)
         @printf(io, "[%s] Epoch %3d: Loss(train): %f Loss(val): %f\n", Dates.format(now(), time_format), epoch, loss(model, train_set), loss(model, validation_set))
@@ -208,7 +216,7 @@ function train_model()
 		# early stopping
 		curr_loss = loss(model, train_set)
 		if(abs(last_loss - curr_loss) < delta)
-			@printf(io, "Early stopping with %f at %d", curr_loss, i)
+			@printf(io, "Early stopping with Loss(train) %f at epoch %d (Accuracy: %f)\n", curr_loss, i, accuracy(model, validation_set))
 			return eval_model(model)
 		end
 		last_loss = curr_loss
@@ -219,7 +227,7 @@ end
 function random_search()
 	rng = MersenneTwister()
 	results = []
-	for search in 1:500
+	for search in 1:800
 		# create random set
 		global momentum = rand(rng, rs_momentum)
 		global features = rand(rng, rs_features)
@@ -284,13 +292,13 @@ if(!runD)
 	# print results 
 	@printf("Best results by Loss:\n")
 	for idx in 1:5 
-		@printf("#%d: Loss %f, accuracy %f in Search: %d ", idx, results[idx][2], results[idx][3], results[idx][1])
+		@printf("#%d: Loss %f, accuracy %f in Search: %d\n", idx, results[idx][2], results[idx][3], results[idx][1])
 	end
 	
-	sort!(results, by = x -> x[3])
+	sort!(results, by = x -> x[3], rev=true)
 	@printf("Best results by Accuarcy:\n")
 	for idx in 1:5 
-		@printf("#%d: Accuarcy: %f, Loss %f in Search: %d ", idx, results[idx][3], results[idx][2], results[idx][1])
+		@printf("#%d: Accuarcy: %f, Loss %f in Search: %d\n", idx, results[idx][3], results[idx][2], results[idx][1])
 	end
 else 
 	train_model() 
