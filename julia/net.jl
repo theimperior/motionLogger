@@ -221,12 +221,12 @@ function random_search()
 	results = []
 	for search in 1:500
 		# create random set
-		momentum = rand(rng, rs_momentum)
-		features = rand(rng, rs_features)
-		dropout_rate = rand(rng, rs_dropout_rate)
-		kernel = rand(rng, rs_kernel)
-		pooldims = rand(rng, rs_pooldims)
-		learning_rate = rand(rng, rs_learning_rate)
+		global momentum = rand(rng, rs_momentum)
+		global features = rand(rng, rs_features)
+		global dropout_rate = rand(rng, rs_dropout_rate)
+		global kernel = rand(rng, rs_kernel)
+		global pooldims = rand(rng, rs_pooldims)
+		global learning_rate = rand(rng, rs_learning_rate)
 		
 		# printf configuration
 		config1 = "momentum$(momentum), features=$(features), dropout_rate=$(dropout_rate)"
