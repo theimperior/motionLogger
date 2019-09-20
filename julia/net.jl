@@ -125,7 +125,7 @@ function accuracy(model, dataset)
 end
 
 function button_number(X)
-	return Tracker.data(X[1] * 1080) ÷ 360 + 3 * (Tracker.data(X[2] * 980) ÷ 245)
+	return (X[1] * 1080) ÷ 360 + 3 * ((X[2] * 980) ÷ 245)
 end
 
 function loss(model, x, y) 
