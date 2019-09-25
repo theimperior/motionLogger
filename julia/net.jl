@@ -112,6 +112,7 @@ function adapt_learnrate(epoch_idx)
 end
 
 # TODO different idea for the accuracy: draw circle around ground truth and if prediction lays within the circle count this as a hit 
+# TODO calculate the mean distance in pixel without normalizantion
 
 function accuracy(model, x, y)
 	y_hat = Tracker.data(model(x))

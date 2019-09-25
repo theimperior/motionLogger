@@ -37,7 +37,7 @@ Structure of the .mat file:
 
     fieldname | size
     ----------------
-       data   | 50 x 6 x N
+       data   | 60 x 6 x N
   bin_targets | 2 x N (1: x, 2: y)
 
 where N denotes the number of samples, 50 is the window size and 6 are the number of channels
