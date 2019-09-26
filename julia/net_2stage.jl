@@ -66,24 +66,18 @@ const time_format = "HH:MM:SS"
 const date_format = "dd_mm_yyyy"
 data_size = (60, 6) # resulting in a 300ms frame
 
-# DEFAULT ARCHITECTURE
+# ARCHITECTURE
 channels = 1
-features = [96, 192, 192] # needs to find the relation between the axis which represents the screen position 
-kernel = [(7,1), (7,1), (3,6)]  # convolute only horizontally, last should convolute all 6 rows together to map relations between the channels  
+features = [32, 64, 128] # needs to find the relation between the axis which represents the screen position 
+kernel = [(3,1), (3,1), (3,6)]  # convolute only horizontally, last should convolute all 6 rows together to map relations between the channels  
 pooldims = [(2,1), (2,1)]# (30,6) -> (15,6)
 # formula for calculating output dimensions of convolution: 
 # dim1 = ((dim1 - Filtersize + 2 * padding) / stride) + 1
 inputDense = [1664, 600, 300] # prod((data_size .÷ pooldims[1] .÷ pooldims[2]) .- kernel[3] .+ 1) * features[3]
 dropout_rate = 0.3f0
 
-# random search values
-rs_momentum = [0.9, 0.92, 0.94, 0.96, 0.98, 0.99]
-rs_features = [[32, 64, 128], [64, 64, 64], [32, 32, 32], [96, 192, 192]]
-rs_dropout_rate = [0.1, 0.3, 0.4, 0.6, 0.8]
-rs_kernel = [[(3,1), (3,1), (3,6)], [(5,1), (5,1), (3,6)], [(7,1), (7,1), (3,6)], [(3,1), (3,1), (2,6)], [(5,1), (5,1), (2,6)], [(7,1), (7,1), (2,6)], 
-				[(7,1), (5,1), (2,6)], [(7,1), (5,1), (3,6)], [(5,1), (3,1), (2,6)], [(5,1), (3,1), (3,6)]]
-rs_pooldims = [[(2,1), (2,1)], [(3,1), (3,1)]]
-rs_learning_rate = [1, 0.3, 0.1, 0.03, 0.01, 0.003, 0.001]
+rs_learning_rate = [0.3, 0.1, 0.03] # [1, 0.3, 0.1, 0.03, 0.01, 0.003, 0.001]
+rs_decay_step = [20, 40, 60]
 
 dataset_folderpath = "../MATLAB/TrainingData/"
 dataset_name = "2019_09_09_1658"
@@ -111,6 +105,9 @@ function adapt_learnrate(epoch_idx)
     return learning_rate * decay_rate^(epoch_idx / decay_step)
 end
 
+# TODO different idea for the accuracy: draw circle around ground truth and if prediction lays within the circle count this as a hit 
+# TODO calculate the mean distance in pixel without normalizantion
+
 function accuracy(model, x, y)
 	y_hat = Tracker.data(model(x))
 	return mean(mapslices(button_number, y_hat, dims=1) .== mapslices(button_number, y, dims=1))
@@ -125,7 +122,7 @@ function accuracy(model, dataset)
 end
 
 function button_number(X)
-	return Tracker.data(X[1] * 1080) ÷ 360 + 3 * (Tracker.data(X[2] * 980) ÷ 245)
+	return (X[1] * 1080) ÷ 360 + 3 * ((X[2] * 980) ÷ 245)
 end
 
 function loss(model, x, y) 
@@ -205,7 +202,10 @@ function train_model()
 	opt = Momentum(learning_rate, momentum)
 	log(model, 0, !validate)
 	Flux.testmode!(model, false) # bring model in training mode
-	last_loss = loss(model, train_set)
+	last_loss_train = loss(model, train_set)
+	last_loss_val = loss(model, validation_set)
+	overfitting_epochs = 0
+	converged_epochs = 0
     for i in 1:epochs
 		flush(io)
         Flux.train!((x, y) -> loss(model, x, y), params(model), train_set, opt)
@@ -213,13 +213,31 @@ function train_model()
 		log_csv(model, i)
 		log(model, i, !validate)
 		
-		# early stopping
-		curr_loss = loss(model, train_set)
-		if(abs(last_loss - curr_loss) < delta)
-			@printf(io, "Early stopping with Loss(train) %f at epoch %d (Accuracy: %f)\n", curr_loss, i, accuracy(model, validation_set))
+		# stopp if network converged or is showing signs of overfitting
+		curr_loss_train = loss(model, train_set)
+		curr_loss_val = loss(model, validation_set)
+		if(abs(last_loss_train - curr_loss_train) < delta)
+			converged_epochs++
+			if(converged_epochs == 5)
+				@printf(io, "Converged at Loss(train): %f, Loss(val): %f in epoch %d with accuracy(val): %f\n", curr_loss_train, curr_loss_val, i, accuracy(model, validation_set))
+			end
 			return eval_model(model)
+		else
+			converged_epochs = 0
 		end
-		last_loss = curr_loss
+		
+		if((curr_loss_val - last_loss_val) > 0 )
+			overfitting_epochs++
+			if(overfitting_epochs == 8)
+				@printf(io, "Stopping before overfitting at Loss(train): %f, Loss(val): %f in epoch %d with accuracy(val): %f\n", curr_loss_train, curr_loss_val, i, accuracy(model, validation_set))
+			end
+			return eval(model)
+		else
+			overfitting_epochs = 0
+		end
+		
+		last_loss_train = curr_loss_train
+		last_loss_val = curr_loss_val
     end
     return eval_model(model)
 end
@@ -283,23 +301,14 @@ if (usegpu)
 	const validation_set = gpu.(validation)
 	const test_set = gpu.(test)
 end
-
-if(!runD)
-	results = random_search()
-	BSON.@save "results.bson" results
-	#TODO sort and print best 5-10 results 
-	sort!(results, by = x -> x[2])
-	# print results 
-	@printf("Best results by Loss:\n")
-	for idx in 1:5 
-		@printf("#%d: Loss %f, accuracy %f in Search: %d\n", idx, results[idx][2], results[idx][3], results[idx][1])
+for rate in rs_learning_rate
+	learning_rate = rate
+	for decay in rs_decay_step
+		decay_step = decay
+		config = "learning_rate=$(learning_rate), decay_rate=$(decay_rate)"
+		@printf(io, "\nConfiguration %s\n", config)
+		train_model()
 	end
-	
-	sort!(results, by = x -> x[3], rev=true)
-	@printf("Best results by Accuarcy:\n")
-	for idx in 1:5 
-		@printf("#%d: Accuarcy: %f, Loss %f in Search: %d\n", idx, results[idx][3], results[idx][2], results[idx][1])
-	end
-else 
-	train_model() 
 end
+	
+

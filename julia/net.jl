@@ -111,6 +111,9 @@ function adapt_learnrate(epoch_idx)
     return learning_rate * decay_rate^(epoch_idx / decay_step)
 end
 
+# TODO different idea for the accuracy: draw circle around ground truth and if prediction lays within the circle count this as a hit 
+# TODO calculate the mean distance in pixel without normalizantion
+
 function accuracy(model, x, y)
 	y_hat = Tracker.data(model(x))
 	return mean(mapslices(button_number, y_hat, dims=1) .== mapslices(button_number, y, dims=1))
