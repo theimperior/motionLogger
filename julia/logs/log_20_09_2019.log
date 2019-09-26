@@ -1,3 +1,1039 @@
 
 --------[20_09_2019 13:25:28]--------
 Random Grid Search
+
+Search 1 of 500
+momentum0.96, features=[96, 192, 192], dropout_rate=0.6
+kernel=Tuple{Int64,Int64}[(7, 1), (5, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.03
+
+[13:26:39] INIT Loss(val): 0.141007 Accuarcy: 0.117381
+[13:29:14] Epoch   2: Loss(train): 0.088968 Loss(val): 0.087040
+[13:30:22] Epoch   4: Loss(train): 0.078608 Loss(val): 0.076951
+[13:31:29] Epoch   6: Loss(train): 0.076482 Loss(val): 0.074798
+[13:32:37] Epoch   8: Loss(train): 0.074540 Loss(val): 0.072936
+[13:33:44] Epoch  10: Loss(train): 0.073011 Loss(val): 0.071681
+[13:34:52] Epoch  12: Loss(train): 0.071422 Loss(val): 0.070381
+[13:36:01] Epoch  14: Loss(train): 0.070299 Loss(val): 0.069362
+[13:37:10] Epoch  16: Loss(train): 0.069983 Loss(val): 0.069102
+[13:38:18] Epoch  18: Loss(train): 0.069733 Loss(val): 0.068830
+[13:39:27] Epoch  20: Loss(train): 0.068419 Loss(val): 0.067956
+[13:40:35] Epoch  22: Loss(train): 0.068390 Loss(val): 0.067870
+[13:41:44] Epoch  24: Loss(train): 0.068358 Loss(val): 0.067915
+[13:42:53] Epoch  26: Loss(train): 0.068200 Loss(val): 0.067803
+[13:44:01] Epoch  28: Loss(train): 0.067958 Loss(val): 0.067655
+[13:45:10] Epoch  30: Loss(train): 0.067752 Loss(val): 0.067437
+[13:46:18] Epoch  32: Loss(train): 0.067372 Loss(val): 0.067225
+[13:47:28] Epoch  34: Loss(train): 0.067107 Loss(val): 0.067024
+[13:48:38] Epoch  36: Loss(train): 0.066756 Loss(val): 0.066762
+[13:49:50] Epoch  38: Loss(train): 0.066352 Loss(val): 0.066501
+[13:50:59] Epoch  40: Loss(train): 0.066226 Loss(val): 0.066400
+[13:51:06] FINAL(40) Loss(val): 0.066400 Accuarcy: 0.621310
+
+Search 2 of 500
+momentum0.99, features=[32, 32, 32], dropout_rate=0.4
+kernel=Tuple{Int64,Int64}[(5, 1), (3, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=1.0
+
+[13:51:25] INIT Loss(val): 0.116734 Accuarcy: 0.086190
+[13:52:24] Epoch   2: Loss(train): 0.111209 Loss(val): 0.112811
+[13:52:52] Epoch   4: Loss(train): 0.070398 Loss(val): 0.072423
+[13:53:22] Epoch   6: Loss(train): 0.068424 Loss(val): 0.070707
+[13:53:52] Epoch   8: Loss(train): 0.067158 Loss(val): 0.069694
+[13:54:21] Epoch  10: Loss(train): 0.066686 Loss(val): 0.069351
+[13:54:50] Epoch  12: Loss(train): 0.066295 Loss(val): 0.069087
+[13:55:20] Epoch  14: Loss(train): 0.066166 Loss(val): 0.069011
+[13:55:49] Epoch  16: Loss(train): 0.066101 Loss(val): 0.068977
+[13:56:18] Epoch  18: Loss(train): 0.066013 Loss(val): 0.068943
+[13:56:46] Epoch  20: Loss(train): 0.065961 Loss(val): 0.068933
+[13:57:14] Epoch  22: Loss(train): 0.065942 Loss(val): 0.068932
+Early stopping with Loss(train) 0.065942 at epoch 22 (Accuracy: 0.091786)
+
+Search 3 of 500
+momentum0.98, features=[32, 64, 128], dropout_rate=0.3
+kernel=Tuple{Int64,Int64}[(5, 1), (5, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.3
+
+[13:57:28] INIT Loss(val): 0.158934 Accuarcy: 0.094031
+[13:59:04] Epoch   2: Loss(train): 0.079493 Loss(val): 0.079803
+[14:00:10] Epoch   4: Loss(train): 0.071139 Loss(val): 0.070190
+[14:01:15] Epoch   6: Loss(train): 0.057562 Loss(val): 0.059708
+[14:02:20] Epoch   8: Loss(train): 0.042016 Loss(val): 0.042341
+[14:03:25] Epoch  10: Loss(train): 0.035010 Loss(val): 0.034012
+[14:04:32] Epoch  12: Loss(train): 0.031262 Loss(val): 0.030622
+[14:05:40] Epoch  14: Loss(train): 0.031100 Loss(val): 0.031548
+[14:06:43] Epoch  16: Loss(train): 0.027940 Loss(val): 0.026886
+[14:07:49] Epoch  18: Loss(train): 0.026650 Loss(val): 0.026341
+[14:08:55] Epoch  20: Loss(train): 0.025911 Loss(val): 0.024959
+[14:09:59] Epoch  22: Loss(train): 0.023871 Loss(val): 0.022819
+[14:11:04] Epoch  24: Loss(train): 0.022636 Loss(val): 0.021778
+[14:12:08] Epoch  26: Loss(train): 0.020553 Loss(val): 0.020178
+[14:13:13] Epoch  28: Loss(train): 0.020170 Loss(val): 0.019662
+[14:14:21] Epoch  30: Loss(train): 0.020618 Loss(val): 0.019873
+[14:15:29] Epoch  32: Loss(train): 0.021250 Loss(val): 0.020526
+[14:16:36] Epoch  34: Loss(train): 0.020209 Loss(val): 0.019461
+[14:17:50] Epoch  36: Loss(train): 0.019272 Loss(val): 0.018871
+[14:19:04] Epoch  38: Loss(train): 0.019579 Loss(val): 0.019146
+[14:20:18] Epoch  40: Loss(train): 0.020248 Loss(val): 0.019587
+[14:20:28] FINAL(40) Loss(val): 0.019587 Accuarcy: 0.607517
+
+Search 4 of 500
+momentum0.98, features=[32, 32, 32], dropout_rate=0.3
+kernel=Tuple{Int64,Int64}[(5, 1), (5, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.003
+
+[14:20:51] INIT Loss(val): 0.128640 Accuarcy: 0.094643
+[14:21:39] Epoch   2: Loss(train): 0.056761 Loss(val): 0.056647
+[14:22:08] Epoch   4: Loss(train): 0.050836 Loss(val): 0.050852
+[14:22:37] Epoch   6: Loss(train): 0.048547 Loss(val): 0.048590
+[14:23:06] Epoch   8: Loss(train): 0.047363 Loss(val): 0.047409
+[14:23:35] Epoch  10: Loss(train): 0.046506 Loss(val): 0.046528
+[14:24:05] Epoch  12: Loss(train): 0.046048 Loss(val): 0.046113
+[14:24:34] Epoch  14: Loss(train): 0.045531 Loss(val): 0.045707
+[14:25:05] Epoch  16: Loss(train): 0.045208 Loss(val): 0.045390
+[14:25:35] Epoch  18: Loss(train): 0.044927 Loss(val): 0.045131
+[14:26:06] Epoch  20: Loss(train): 0.044599 Loss(val): 0.044836
+[14:26:36] Epoch  22: Loss(train): 0.044361 Loss(val): 0.044653
+[14:27:05] Epoch  24: Loss(train): 0.044173 Loss(val): 0.044473
+[14:27:36] Epoch  26: Loss(train): 0.043907 Loss(val): 0.044196
+[14:28:06] Epoch  28: Loss(train): 0.043688 Loss(val): 0.044030
+[14:28:36] Epoch  30: Loss(train): 0.043458 Loss(val): 0.043854
+[14:29:07] Epoch  32: Loss(train): 0.043282 Loss(val): 0.043654
+[14:29:37] Epoch  34: Loss(train): 0.043138 Loss(val): 0.043506
+[14:30:07] Epoch  36: Loss(train): 0.042960 Loss(val): 0.043359
+[14:30:38] Epoch  38: Loss(train): 0.042856 Loss(val): 0.043255
+Early stopping with Loss(train) 0.044059 at epoch 38 (Accuracy: 0.575901)
+
+Search 5 of 500
+momentum0.94, features=[64, 64, 64], dropout_rate=0.1
+kernel=Tuple{Int64,Int64}[(5, 1), (3, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.003
+
+[14:30:53] INIT Loss(val): 0.119816 Accuarcy: 0.091463
+[14:34:37] Epoch   2: Loss(train): 0.068172 Loss(val): 0.066521
+[14:38:47] Epoch   4: Loss(train): 0.061371 Loss(val): 0.060421
+[14:44:35] Epoch   6: Loss(train): 0.058998 Loss(val): 0.058359
+[14:50:21] Epoch   8: Loss(train): 0.057713 Loss(val): 0.057312
+[14:54:55] Epoch  10: Loss(train): 0.056964 Loss(val): 0.056694
+[14:59:13] Epoch  12: Loss(train): 0.056202 Loss(val): 0.056133
+[15:03:30] Epoch  14: Loss(train): 0.055774 Loss(val): 0.055825
+[15:07:46] Epoch  16: Loss(train): 0.055417 Loss(val): 0.055541
+[15:09:41] Epoch  18: Loss(train): 0.055157 Loss(val): 0.055343
+[15:11:36] Epoch  20: Loss(train): 0.054948 Loss(val): 0.055184
+[15:14:40] Epoch  22: Loss(train): 0.054736 Loss(val): 0.055040
+[15:17:10] Epoch  24: Loss(train): 0.054518 Loss(val): 0.054851
+[15:19:29] Epoch  26: Loss(train): 0.054388 Loss(val): 0.054757
+[15:21:38] Epoch  28: Loss(train): 0.054141 Loss(val): 0.054547
+[15:23:56] Epoch  30: Loss(train): 0.054011 Loss(val): 0.054442
+[15:25:57] Epoch  32: Loss(train): 0.053802 Loss(val): 0.054259
+[15:27:59] Epoch  34: Loss(train): 0.053625 Loss(val): 0.054112
+[15:30:03] Epoch  36: Loss(train): 0.053405 Loss(val): 0.053942
+[15:32:05] Epoch  38: Loss(train): 0.053237 Loss(val): 0.053814
+Early stopping with Loss(train) 0.054171 at epoch 38 (Accuracy: 0.534439)
+
+Search 6 of 500
+momentum0.94, features=[96, 192, 192], dropout_rate=0.3
+kernel=Tuple{Int64,Int64}[(3, 1), (3, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.1
+
+[15:32:54] INIT Loss(val): 0.138280 Accuarcy: 0.103418
+[15:34:06] Epoch   2: Loss(train): 0.083781 Loss(val): 0.084471
+[15:35:16] Epoch   4: Loss(train): 0.076121 Loss(val): 0.077370
+[15:36:23] Epoch   6: Loss(train): 0.074109 Loss(val): 0.073338
+[15:37:30] Epoch   8: Loss(train): 0.070528 Loss(val): 0.070370
+[15:38:36] Epoch  10: Loss(train): 0.067579 Loss(val): 0.067635
+[15:39:43] Epoch  12: Loss(train): 0.065495 Loss(val): 0.065627
+[15:40:51] Epoch  14: Loss(train): 0.064575 Loss(val): 0.064573
+[15:42:01] Epoch  16: Loss(train): 0.062974 Loss(val): 0.063009
+[15:43:23] Epoch  18: Loss(train): 0.061456 Loss(val): 0.061671
+[15:44:49] Epoch  20: Loss(train): 0.060464 Loss(val): 0.060732
+[15:46:07] Epoch  22: Loss(train): 0.059721 Loss(val): 0.060011
+[15:47:29] Epoch  24: Loss(train): 0.058930 Loss(val): 0.059211
+[15:48:42] Epoch  26: Loss(train): 0.058132 Loss(val): 0.058528
+[15:50:06] Epoch  28: Loss(train): 0.057695 Loss(val): 0.058175
+[15:51:18] Epoch  30: Loss(train): 0.056704 Loss(val): 0.057436
+[15:52:28] Epoch  32: Loss(train): 0.056475 Loss(val): 0.057144
+[15:53:48] Epoch  34: Loss(train): 0.055826 Loss(val): 0.056582
+Early stopping with Loss(train) 0.056777 at epoch 35 (Accuracy: 0.632602)
+
+Search 7 of 500
+momentum0.9, features=[32, 64, 128], dropout_rate=0.4
+kernel=Tuple{Int64,Int64}[(5, 1), (3, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.003
+
+[15:54:46] INIT Loss(val): 0.146946 Accuarcy: 0.092534
+[15:59:34] Epoch   2: Loss(train): 0.080755 Loss(val): 0.080996
+[16:04:53] Epoch   4: Loss(train): 0.072572 Loss(val): 0.072945
+[16:10:04] Epoch   6: Loss(train): 0.069757 Loss(val): 0.070359
+[16:16:05] Epoch   8: Loss(train): 0.068311 Loss(val): 0.069053
+[16:18:27] Epoch  10: Loss(train): 0.067540 Loss(val): 0.068310
+[16:20:27] Epoch  12: Loss(train): 0.066874 Loss(val): 0.067751
+[16:21:51] Epoch  14: Loss(train): 0.066258 Loss(val): 0.067226
+[16:23:24] Epoch  16: Loss(train): 0.065859 Loss(val): 0.066875
+[16:24:42] Epoch  18: Loss(train): 0.065511 Loss(val): 0.066519
+[16:26:03] Epoch  20: Loss(train): 0.065213 Loss(val): 0.066262
+[16:27:34] Epoch  22: Loss(train): 0.064957 Loss(val): 0.066055
+[16:28:56] Epoch  24: Loss(train): 0.064687 Loss(val): 0.065852
+[16:30:15] Epoch  26: Loss(train): 0.064495 Loss(val): 0.065710
+[16:31:42] Epoch  28: Loss(train): 0.064351 Loss(val): 0.065567
+[16:33:03] Epoch  30: Loss(train): 0.064181 Loss(val): 0.065445
+Early stopping with Loss(train) 0.067298 at epoch 31 (Accuracy: 0.446395)
+
+Search 8 of 500
+momentum0.96, features=[32, 32, 32], dropout_rate=0.6
+kernel=Tuple{Int64,Int64}[(5, 1), (5, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.003
+
+[16:34:07] INIT Loss(val): 0.114290 Accuarcy: 0.088316
+[16:34:46] Epoch   2: Loss(train): 0.064952 Loss(val): 0.064766
+[16:35:23] Epoch   4: Loss(train): 0.055647 Loss(val): 0.055572
+[16:36:02] Epoch   6: Loss(train): 0.052844 Loss(val): 0.052606
+[16:36:38] Epoch   8: Loss(train): 0.050985 Loss(val): 0.050845
+[16:37:12] Epoch  10: Loss(train): 0.049845 Loss(val): 0.049633
+[16:37:47] Epoch  12: Loss(train): 0.049152 Loss(val): 0.048910
+[16:38:22] Epoch  14: Loss(train): 0.048669 Loss(val): 0.048351
+[16:38:57] Epoch  16: Loss(train): 0.048184 Loss(val): 0.047886
+[16:39:31] Epoch  18: Loss(train): 0.047724 Loss(val): 0.047523
+[16:40:06] Epoch  20: Loss(train): 0.047366 Loss(val): 0.047177
+[16:40:42] Epoch  22: Loss(train): 0.047168 Loss(val): 0.046973
+[16:41:17] Epoch  24: Loss(train): 0.046858 Loss(val): 0.046676
+[16:41:52] Epoch  26: Loss(train): 0.046654 Loss(val): 0.046519
+[16:42:27] Epoch  28: Loss(train): 0.046444 Loss(val): 0.046329
+[16:43:03] Epoch  30: Loss(train): 0.046292 Loss(val): 0.046197
+[16:43:39] Epoch  32: Loss(train): 0.046148 Loss(val): 0.046083
+[16:44:14] Epoch  34: Loss(train): 0.045966 Loss(val): 0.045960
+[16:44:50] Epoch  36: Loss(train): 0.045872 Loss(val): 0.045834
+[16:45:40] Epoch  38: Loss(train): 0.045775 Loss(val): 0.045743
+Early stopping with Loss(train) 0.048965 at epoch 38 (Accuracy: 0.502738)
+
+Search 9 of 500
+momentum0.9, features=[32, 64, 128], dropout_rate=0.6
+kernel=Tuple{Int64,Int64}[(7, 1), (5, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.3
+
+[16:46:09] INIT Loss(val): 0.128704 Accuarcy: 0.095255
+[16:47:37] Epoch   2: Loss(train): 0.068261 Loss(val): 0.066425
+[16:48:59] Epoch   4: Loss(train): 0.059768 Loss(val): 0.058380
+[16:49:56] Epoch   6: Loss(train): 0.056013 Loss(val): 0.054921
+[16:50:56] Epoch   8: Loss(train): 0.052184 Loss(val): 0.051936
+[16:52:12] Epoch  10: Loss(train): 0.050930 Loss(val): 0.050823
+[16:53:14] Epoch  12: Loss(train): 0.050832 Loss(val): 0.051081
+[16:54:05] Epoch  14: Loss(train): 0.047966 Loss(val): 0.048353
+[16:54:58] Epoch  16: Loss(train): 0.046510 Loss(val): 0.046471
+[16:55:53] Epoch  18: Loss(train): 0.045391 Loss(val): 0.045162
+Early stopping with Loss(train) 0.047088 at epoch 19 (Accuracy: 0.514779)
+
+Search 10 of 500
+momentum0.99, features=[32, 32, 32], dropout_rate=0.6
+kernel=Tuple{Int64,Int64}[(7, 1), (7, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.1
+
+[16:56:41] INIT Loss(val): 0.155156 Accuarcy: 0.107092
+[16:57:23] Epoch   2: Loss(train): 0.082692 Loss(val): 0.082872
+[16:58:03] Epoch   4: Loss(train): 0.070038 Loss(val): 0.068951
+[16:58:43] Epoch   6: Loss(train): 0.052024 Loss(val): 0.051050
+[16:59:23] Epoch   8: Loss(train): 0.042558 Loss(val): 0.042033
+[17:00:01] Epoch  10: Loss(train): 0.033804 Loss(val): 0.032005
+[17:00:41] Epoch  12: Loss(train): 0.028679 Loss(val): 0.028131
+[17:01:25] Epoch  14: Loss(train): 0.026270 Loss(val): 0.025863
+[17:02:07] Epoch  16: Loss(train): 0.025516 Loss(val): 0.024859
+[17:02:46] Epoch  18: Loss(train): 0.024369 Loss(val): 0.024071
+[17:03:26] Epoch  20: Loss(train): 0.022684 Loss(val): 0.022117
+[17:04:06] Epoch  22: Loss(train): 0.022049 Loss(val): 0.020969
+[17:04:45] Epoch  24: Loss(train): 0.021334 Loss(val): 0.020421
+[17:05:26] Epoch  26: Loss(train): 0.021068 Loss(val): 0.020358
+[17:06:06] Epoch  28: Loss(train): 0.021064 Loss(val): 0.020323
+[17:06:45] Epoch  30: Loss(train): 0.021924 Loss(val): 0.020800
+[17:07:25] Epoch  32: Loss(train): 0.022128 Loss(val): 0.021133
+[17:08:05] Epoch  34: Loss(train): 0.021443 Loss(val): 0.020385
+[17:08:44] Epoch  36: Loss(train): 0.023132 Loss(val): 0.021738
+[17:09:23] Epoch  38: Loss(train): 0.024656 Loss(val): 0.023247
+[17:10:02] Epoch  40: Loss(train): 0.022748 Loss(val): 0.021955
+[17:10:07] FINAL(40) Loss(val): 0.021955 Accuarcy: 0.579932
+
+Search 11 of 500
+momentum0.99, features=[32, 64, 128], dropout_rate=0.3
+kernel=Tuple{Int64,Int64}[(5, 1), (5, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.003
+
+[17:10:22] INIT Loss(val): 0.131512 Accuarcy: 0.094524
+[17:11:17] Epoch   2: Loss(train): 0.067090 Loss(val): 0.065792
+[17:12:12] Epoch   4: Loss(train): 0.061073 Loss(val): 0.059899
+[17:13:05] Epoch   6: Loss(train): 0.059854 Loss(val): 0.059079
+[17:14:02] Epoch   8: Loss(train): 0.059035 Loss(val): 0.058605
+[17:14:57] Epoch  10: Loss(train): 0.058039 Loss(val): 0.057734
+[17:15:54] Epoch  12: Loss(train): 0.056114 Loss(val): 0.055818
+[17:17:03] Epoch  14: Loss(train): 0.055465 Loss(val): 0.055276
+[17:18:32] Epoch  16: Loss(train): 0.055368 Loss(val): 0.055433
+[17:19:59] Epoch  18: Loss(train): 0.055454 Loss(val): 0.055520
+[17:21:32] Epoch  20: Loss(train): 0.055490 Loss(val): 0.055287
+[17:22:53] Epoch  22: Loss(train): 0.054614 Loss(val): 0.054396
+[17:23:49] Epoch  24: Loss(train): 0.053453 Loss(val): 0.053415
+[17:25:15] Epoch  26: Loss(train): 0.053183 Loss(val): 0.053106
+[17:26:20] Epoch  28: Loss(train): 0.053469 Loss(val): 0.053248
+[17:27:23] Epoch  30: Loss(train): 0.054454 Loss(val): 0.053836
+[17:28:23] Epoch  32: Loss(train): 0.054597 Loss(val): 0.053841
+[17:29:24] Epoch  34: Loss(train): 0.053575 Loss(val): 0.053139
+[17:30:23] Epoch  36: Loss(train): 0.052531 Loss(val): 0.052516
+[17:31:27] Epoch  38: Loss(train): 0.052137 Loss(val): 0.052324
+[17:32:28] Epoch  40: Loss(train): 0.051984 Loss(val): 0.052194
+[17:32:35] FINAL(40) Loss(val): 0.052194 Accuarcy: 0.657959
+
+Search 12 of 500
+momentum0.98, features=[64, 64, 64], dropout_rate=0.1
+kernel=Tuple{Int64,Int64}[(3, 1), (3, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.1
+
+[17:32:56] INIT Loss(val): 0.152510 Accuarcy: 0.094932
+[17:34:22] Epoch   2: Loss(train): 0.076679 Loss(val): 0.078237
+[17:35:44] Epoch   4: Loss(train): 0.059022 Loss(val): 0.060126
+[17:40:56] Epoch   6: Loss(train): 0.050557 Loss(val): 0.051844
+[17:49:29] Epoch   8: Loss(train): 0.045205 Loss(val): 0.045557
+[18:00:08] Epoch  10: Loss(train): 0.040994 Loss(val): 0.041337
+[18:08:11] Epoch  12: Loss(train): 0.038653 Loss(val): 0.038964
+[18:15:40] Epoch  14: Loss(train): 0.036438 Loss(val): 0.036957
+[18:25:46] Epoch  16: Loss(train): 0.035700 Loss(val): 0.035639
+[18:35:47] Epoch  18: Loss(train): 0.034637 Loss(val): 0.034805
+[18:43:48] Epoch  20: Loss(train): 0.031340 Loss(val): 0.031079
+[18:51:14] Epoch  22: Loss(train): 0.029792 Loss(val): 0.029546
+[19:02:50] Epoch  24: Loss(train): 0.028174 Loss(val): 0.027946
+[19:11:45] Epoch  26: Loss(train): 0.027586 Loss(val): 0.027259
+[19:19:33] Epoch  28: Loss(train): 0.027456 Loss(val): 0.027579
+[19:28:45] Epoch  30: Loss(train): 0.027956 Loss(val): 0.027891
+[19:40:09] Epoch  32: Loss(train): 0.028770 Loss(val): 0.028286
+Early stopping with Loss(train) 0.028975 at epoch 33 (Accuracy: 0.584439)
+
+Search 13 of 500
+momentum0.99, features=[64, 64, 64], dropout_rate=0.1
+kernel=Tuple{Int64,Int64}[(5, 1), (3, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.001
+
+[19:46:57] INIT Loss(val): 0.145452 Accuarcy: 0.113588
+[19:50:44] Epoch   2: Loss(train): 0.089347 Loss(val): 0.088077
+[19:54:42] Epoch   4: Loss(train): 0.063581 Loss(val): 0.064125
+[19:59:21] Epoch   6: Loss(train): 0.061616 Loss(val): 0.062470
+[20:06:13] Epoch   8: Loss(train): 0.061005 Loss(val): 0.061986
+[20:11:36] Epoch  10: Loss(train): 0.060453 Loss(val): 0.061392
+[20:16:11] Epoch  12: Loss(train): 0.059992 Loss(val): 0.060942
+[20:20:27] Epoch  14: Loss(train): 0.059627 Loss(val): 0.060763
+[20:24:29] Epoch  16: Loss(train): 0.059573 Loss(val): 0.060785
+[20:28:31] Epoch  18: Loss(train): 0.059532 Loss(val): 0.060666
+[20:34:27] Epoch  20: Loss(train): 0.058798 Loss(val): 0.059861
+[20:41:03] Epoch  22: Loss(train): 0.058062 Loss(val): 0.059021
+[20:46:14] Epoch  24: Loss(train): 0.057693 Loss(val): 0.058506
+[20:50:45] Epoch  26: Loss(train): 0.057584 Loss(val): 0.058362
+[20:54:59] Epoch  28: Loss(train): 0.057410 Loss(val): 0.058215
+[20:59:00] Epoch  30: Loss(train): 0.057174 Loss(val): 0.057987
+[21:03:40] Epoch  32: Loss(train): 0.057070 Loss(val): 0.057808
+[21:10:36] Epoch  34: Loss(train): 0.057235 Loss(val): 0.057774
+[21:16:08] Epoch  36: Loss(train): 0.057474 Loss(val): 0.057816
+[21:21:06] Epoch  38: Loss(train): 0.057530 Loss(val): 0.057807
+[21:25:37] Epoch  40: Loss(train): 0.057105 Loss(val): 0.057592
+[21:26:04] FINAL(40) Loss(val): 0.057592 Accuarcy: 0.591735
+
+Search 14 of 500
+momentum0.9, features=[32, 32, 32], dropout_rate=0.6
+kernel=Tuple{Int64,Int64}[(7, 1), (5, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.01
+
+[21:26:59] INIT Loss(val): 0.122847 Accuarcy: 0.101803
+[21:29:56] Epoch   2: Loss(train): 0.064045 Loss(val): 0.063516
+[21:33:02] Epoch   4: Loss(train): 0.056780 Loss(val): 0.055908
+[21:36:53] Epoch   6: Loss(train): 0.054376 Loss(val): 0.053519
+[21:42:25] Epoch   8: Loss(train): 0.052633 Loss(val): 0.051863
+[21:47:10] Epoch  10: Loss(train): 0.051527 Loss(val): 0.050836
+[21:51:13] Epoch  12: Loss(train): 0.050602 Loss(val): 0.049957
+[21:54:56] Epoch  14: Loss(train): 0.050027 Loss(val): 0.049464
+[21:58:20] Epoch  16: Loss(train): 0.049429 Loss(val): 0.048945
+[22:01:33] Epoch  18: Loss(train): 0.048902 Loss(val): 0.048480
+[22:04:43] Epoch  20: Loss(train): 0.048485 Loss(val): 0.048132
+[22:07:56] Epoch  22: Loss(train): 0.048165 Loss(val): 0.047822
+[22:11:08] Epoch  24: Loss(train): 0.047914 Loss(val): 0.047628
+[22:14:30] Epoch  26: Loss(train): 0.047709 Loss(val): 0.047426
+[22:17:49] Epoch  28: Loss(train): 0.047584 Loss(val): 0.047305
+[22:21:12] Epoch  30: Loss(train): 0.047354 Loss(val): 0.047143
+Early stopping with Loss(train) 0.050260 at epoch 31 (Accuracy: 0.503571)
+
+Search 15 of 500
+momentum0.98, features=[32, 64, 128], dropout_rate=0.1
+kernel=Tuple{Int64,Int64}[(5, 1), (5, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.001
+
+[22:23:39] INIT Loss(val): 0.218097 Accuarcy: 0.093946
+[22:31:36] Epoch   2: Loss(train): 0.072229 Loss(val): 0.072008
+[22:42:38] Epoch   4: Loss(train): 0.066523 Loss(val): 0.066956
+[22:51:18] Epoch   6: Loss(train): 0.064689 Loss(val): 0.065551
+[22:59:03] Epoch   8: Loss(train): 0.063820 Loss(val): 0.064851
+[23:08:26] Epoch  10: Loss(train): 0.063226 Loss(val): 0.064352
+[23:17:54] Epoch  12: Loss(train): 0.062768 Loss(val): 0.063999
+[23:26:17] Epoch  14: Loss(train): 0.062558 Loss(val): 0.063801
+[23:34:03] Epoch  16: Loss(train): 0.062267 Loss(val): 0.063589
+[23:44:32] Epoch  18: Loss(train): 0.061969 Loss(val): 0.063301
+[23:53:31] Epoch  20: Loss(train): 0.061649 Loss(val): 0.062996
+[00:01:31] Epoch  22: Loss(train): 0.061327 Loss(val): 0.062696
+[00:11:05] Epoch  24: Loss(train): 0.060975 Loss(val): 0.062371
+[00:20:49] Epoch  26: Loss(train): 0.060806 Loss(val): 0.062130
+[00:29:09] Epoch  28: Loss(train): 0.060544 Loss(val): 0.061854
+[00:37:04] Epoch  30: Loss(train): 0.060328 Loss(val): 0.061611
+[00:48:06] Epoch  32: Loss(train): 0.060126 Loss(val): 0.061430
+[00:57:20] Epoch  34: Loss(train): 0.059966 Loss(val): 0.061301
+[01:05:24] Epoch  36: Loss(train): 0.059804 Loss(val): 0.061190
+[01:16:04] Epoch  38: Loss(train): 0.059661 Loss(val): 0.061111
+[01:25:57] Epoch  40: Loss(train): 0.059557 Loss(val): 0.061046
+[01:27:07] FINAL(40) Loss(val): 0.061046 Accuarcy: 0.573963
+
+Search 16 of 500
+momentum0.94, features=[64, 64, 64], dropout_rate=0.8
+kernel=Tuple{Int64,Int64}[(5, 1), (3, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.001
+
+[01:29:00] INIT Loss(val): 0.151834 Accuarcy: 0.108827
+[01:33:32] Epoch   2: Loss(train): 0.110386 Loss(val): 0.113633
+[01:38:13] Epoch   4: Loss(train): 0.106996 Loss(val): 0.110476
+[01:44:49] Epoch   6: Loss(train): 0.100696 Loss(val): 0.104549
+[01:52:04] Epoch   8: Loss(train): 0.094171 Loss(val): 0.098184
+[01:58:26] Epoch  10: Loss(train): 0.089803 Loss(val): 0.093782
+[02:03:44] Epoch  12: Loss(train): 0.087074 Loss(val): 0.091006
+[02:08:33] Epoch  14: Loss(train): 0.085113 Loss(val): 0.088931
+[02:13:20] Epoch  16: Loss(train): 0.083500 Loss(val): 0.087246
+[02:21:19] Epoch  18: Loss(train): 0.081911 Loss(val): 0.085563
+[02:28:13] Epoch  20: Loss(train): 0.080556 Loss(val): 0.084120
+[02:34:03] Epoch  22: Loss(train): 0.079362 Loss(val): 0.082816
+[02:39:08] Epoch  24: Loss(train): 0.078311 Loss(val): 0.081671
+[02:43:58] Epoch  26: Loss(train): 0.077400 Loss(val): 0.080661
+[02:49:40] Epoch  28: Loss(train): 0.076570 Loss(val): 0.079715
+[02:57:52] Epoch  30: Loss(train): 0.075883 Loss(val): 0.078951
+[03:04:07] Epoch  32: Loss(train): 0.075348 Loss(val): 0.078346
+[03:09:39] Epoch  34: Loss(train): 0.074812 Loss(val): 0.077732
+[03:14:37] Epoch  36: Loss(train): 0.074405 Loss(val): 0.077256
+[03:19:32] Epoch  38: Loss(train): 0.074032 Loss(val): 0.076837
+[03:27:14] Epoch  40: Loss(train): 0.073680 Loss(val): 0.076428
+[03:28:09] FINAL(40) Loss(val): 0.076428 Accuarcy: 0.274915
+
+Search 17 of 500
+momentum0.9, features=[64, 64, 64], dropout_rate=0.4
+kernel=Tuple{Int64,Int64}[(5, 1), (3, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.03
+
+[03:29:53] INIT Loss(val): 0.131165 Accuarcy: 0.093435
+[03:41:05] Epoch   2: Loss(train): 0.068231 Loss(val): 0.066406
+[03:51:07] Epoch   4: Loss(train): 0.064709 Loss(val): 0.062722
+[04:06:03] Epoch   6: Loss(train): 0.062242 Loss(val): 0.060431
+[04:17:27] Epoch   8: Loss(train): 0.060373 Loss(val): 0.058780
+[04:28:16] Epoch  10: Loss(train): 0.059085 Loss(val): 0.057533
+[04:43:05] Epoch  12: Loss(train): 0.058318 Loss(val): 0.056778
+[04:53:42] Epoch  14: Loss(train): 0.057390 Loss(val): 0.055989
+[05:06:46] Epoch  16: Loss(train): 0.056481 Loss(val): 0.055205
+[05:19:57] Epoch  18: Loss(train): 0.055879 Loss(val): 0.054648
+[05:30:13] Epoch  20: Loss(train): 0.055364 Loss(val): 0.054170
+[05:45:34] Epoch  22: Loss(train): 0.054641 Loss(val): 0.053574
+[05:56:57] Epoch  24: Loss(train): 0.054031 Loss(val): 0.053062
+[06:07:12] Epoch  26: Loss(train): 0.053433 Loss(val): 0.052634
+Early stopping with Loss(train) 0.054989 at epoch 27 (Accuracy: 0.557653)
+
+Search 18 of 500
+momentum0.92, features=[32, 32, 32], dropout_rate=0.3
+kernel=Tuple{Int64,Int64}[(7, 1), (7, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.001
+
+[06:15:45] INIT Loss(val): 0.118689 Accuarcy: 0.101990
+[06:19:38] Epoch   2: Loss(train): 0.068195 Loss(val): 0.069483
+[06:23:52] Epoch   4: Loss(train): 0.062983 Loss(val): 0.063813
+[06:28:34] Epoch   6: Loss(train): 0.060712 Loss(val): 0.061474
+[06:34:45] Epoch   8: Loss(train): 0.059224 Loss(val): 0.060002
+[06:39:41] Epoch  10: Loss(train): 0.058208 Loss(val): 0.059001
+[06:44:28] Epoch  12: Loss(train): 0.057323 Loss(val): 0.058152
+[06:48:47] Epoch  14: Loss(train): 0.056700 Loss(val): 0.057535
+[06:52:56] Epoch  16: Loss(train): 0.056110 Loss(val): 0.056953
+[06:57:00] Epoch  18: Loss(train): 0.055600 Loss(val): 0.056486
+[07:01:11] Epoch  20: Loss(train): 0.055162 Loss(val): 0.056064
+[07:07:25] Epoch  22: Loss(train): 0.054831 Loss(val): 0.055762
+[07:12:41] Epoch  24: Loss(train): 0.054532 Loss(val): 0.055485
+[07:17:21] Epoch  26: Loss(train): 0.054293 Loss(val): 0.055247
+[07:21:44] Epoch  28: Loss(train): 0.054086 Loss(val): 0.055038
+[07:25:57] Epoch  30: Loss(train): 0.053895 Loss(val): 0.054867
+[07:30:12] Epoch  32: Loss(train): 0.053734 Loss(val): 0.054717
+[07:35:30] Epoch  34: Loss(train): 0.053598 Loss(val): 0.054584
+[07:41:27] Epoch  36: Loss(train): 0.053484 Loss(val): 0.054487
+[07:46:25] Epoch  38: Loss(train): 0.053388 Loss(val): 0.054393
+[07:50:59] Epoch  40: Loss(train): 0.053292 Loss(val): 0.054313
+[07:51:26] FINAL(40) Loss(val): 0.054313 Accuarcy: 0.432704
+
+Search 19 of 500
+momentum0.9, features=[96, 192, 192], dropout_rate=0.4
+kernel=Tuple{Int64,Int64}[(5, 1), (5, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=1.0
+
+[07:52:19] INIT Loss(val): 0.174489 Accuarcy: 0.104456
+[08:05:37] Epoch   2: Loss(train): 0.102096 Loss(val): 0.102915
+[08:21:51] Epoch   4: Loss(train): 0.066749 Loss(val): 0.065971
+[08:35:13] Epoch   6: Loss(train): 0.055856 Loss(val): 0.055964
+[08:52:20] Epoch   8: Loss(train): 0.047794 Loss(val): 0.047813
+[09:05:42] Epoch  10: Loss(train): 0.041983 Loss(val): 0.042211
+[09:23:11] Epoch  12: Loss(train): 0.037630 Loss(val): 0.038138
+[09:36:57] Epoch  14: Loss(train): 0.034115 Loss(val): 0.034479
+[09:55:56] Epoch  16: Loss(train): 0.032334 Loss(val): 0.032522
+[10:09:49] Epoch  18: Loss(train): 0.030284 Loss(val): 0.030510
+[10:29:29] Epoch  20: Loss(train): 0.028992 Loss(val): 0.029348
+[10:43:10] Epoch  22: Loss(train): 0.028101 Loss(val): 0.028161
+[11:02:49] Epoch  24: Loss(train): 0.027532 Loss(val): 0.027852
+Early stopping with Loss(train) 0.028088 at epoch 25 (Accuracy: 0.567806)
+
+Search 20 of 500
+momentum0.9, features=[96, 192, 192], dropout_rate=0.6
+kernel=Tuple{Int64,Int64}[(3, 1), (3, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.3
+
+[11:12:09] INIT Loss(val): 0.158469 Accuarcy: 0.092806
+[11:25:25] Epoch   2: Loss(train): 0.092062 Loss(val): 0.091566
+[11:38:25] Epoch   4: Loss(train): 0.081868 Loss(val): 0.081678
+[11:49:01] Epoch   6: Loss(train): 0.076118 Loss(val): 0.075529
+[12:04:29] Epoch   8: Loss(train): 0.073110 Loss(val): 0.072846
+[12:16:23] Epoch  10: Loss(train): 0.069156 Loss(val): 0.069085
+[12:30:09] Epoch  12: Loss(train): 0.066856 Loss(val): 0.067039
+[12:44:01] Epoch  14: Loss(train): 0.065261 Loss(val): 0.065455
+[12:54:52] Epoch  16: Loss(train): 0.063509 Loss(val): 0.064036
+[13:10:55] Epoch  18: Loss(train): 0.061315 Loss(val): 0.061605
+[13:22:43] Epoch  20: Loss(train): 0.059638 Loss(val): 0.059675
+[13:36:46] Epoch  22: Loss(train): 0.058390 Loss(val): 0.058582
+[13:50:21] Epoch  24: Loss(train): 0.057187 Loss(val): 0.057440
+[14:01:25] Epoch  26: Loss(train): 0.056083 Loss(val): 0.056261
+[14:12:57] Epoch  28: Loss(train): 0.055120 Loss(val): 0.055430
+[14:25:54] Epoch  30: Loss(train): 0.054959 Loss(val): 0.055094
+[14:40:39] Epoch  32: Loss(train): 0.054236 Loss(val): 0.054509
+[14:52:26] Epoch  34: Loss(train): 0.053323 Loss(val): 0.053676
+[15:04:28] Epoch  36: Loss(train): 0.052686 Loss(val): 0.053072
+[15:18:03] Epoch  38: Loss(train): 0.051935 Loss(val): 0.052419
+[15:29:22] Epoch  40: Loss(train): 0.051245 Loss(val): 0.051794
+[15:30:12] FINAL(40) Loss(val): 0.051794 Accuarcy: 0.634048
+
+Search 21 of 500
+momentum0.99, features=[96, 192, 192], dropout_rate=0.3
+kernel=Tuple{Int64,Int64}[(7, 1), (7, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.1
+
+[15:31:35] INIT Loss(val): 0.245048 Accuarcy: 0.072585
+[15:49:17] Epoch   2: Loss(train): 0.106915 Loss(val): 0.105428
+[16:05:12] Epoch   4: Loss(train): 0.089091 Loss(val): 0.088908
+[16:23:07] Epoch   6: Loss(train): 0.075282 Loss(val): 0.074277
+[16:40:46] Epoch   8: Loss(train): 0.062850 Loss(val): 0.062624
+[16:58:29] Epoch  10: Loss(train): 0.056189 Loss(val): 0.056083
+[17:17:16] Epoch  12: Loss(train): 0.049655 Loss(val): 0.049626
+[17:34:08] Epoch  14: Loss(train): 0.045409 Loss(val): 0.045518
+[17:54:19] Epoch  16: Loss(train): 0.042162 Loss(val): 0.042254
+[18:10:02] Epoch  18: Loss(train): 0.039818 Loss(val): 0.040065
+[18:30:42] Epoch  20: Loss(train): 0.038585 Loss(val): 0.038927
+[18:46:52] Epoch  22: Loss(train): 0.038263 Loss(val): 0.038389
+[19:07:10] Epoch  24: Loss(train): 0.034990 Loss(val): 0.035632
+[19:25:45] Epoch  26: Loss(train): 0.034374 Loss(val): 0.035082
+[19:43:48] Epoch  28: Loss(train): 0.033463 Loss(val): 0.033584
+[20:03:44] Epoch  30: Loss(train): 0.032233 Loss(val): 0.032437
+[20:20:20] Epoch  32: Loss(train): 0.033065 Loss(val): 0.032645
+[20:41:38] Epoch  34: Loss(train): 0.032210 Loss(val): 0.032403
+[20:58:04] Epoch  36: Loss(train): 0.031725 Loss(val): 0.032099
+[21:18:34] Epoch  38: Loss(train): 0.030471 Loss(val): 0.030934
+[21:36:54] Epoch  40: Loss(train): 0.030312 Loss(val): 0.030813
+[21:38:37] FINAL(40) Loss(val): 0.030813 Accuarcy: 0.600442
+
+Search 22 of 500
+momentum0.98, features=[96, 192, 192], dropout_rate=0.1
+kernel=Tuple{Int64,Int64}[(7, 1), (7, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=1.0
+
+[21:41:08] INIT Loss(val): 0.164662 Accuarcy: 0.097636
+[21:57:03] Epoch   2: Loss(train): 20.748877 Loss(val): 20.759123
+[22:12:28] Epoch   4: Loss(train): 27.568346 Loss(val): 27.566154
+[22:30:34] Epoch   6: Loss(train): 28.220102 Loss(val): 28.217909
+[22:48:10] Epoch   8: Loss(train): 67.155548 Loss(val): 67.165779
+[23:07:08] Epoch  10: Loss(train): 67.068855 Loss(val): 67.079079
+[23:23:42] Epoch  12: Loss(train): 66.994072 Loss(val): 67.004318
+[23:43:22] Epoch  14: Loss(train): 66.931145 Loss(val): 66.941414
+[23:59:21] Epoch  16: Loss(train): 66.875031 Loss(val): 66.885284
+[00:19:03] Epoch  18: Loss(train): 66.825371 Loss(val): 66.835571
+[00:36:41] Epoch  20: Loss(train): 66.781197 Loss(val): 66.791435
+[00:54:54] Epoch  22: Loss(train): 66.741692 Loss(val): 66.751991
+[01:15:18] Epoch  24: Loss(train): 66.706535 Loss(val): 66.716827
+[01:32:32] Epoch  26: Loss(train): 66.675232 Loss(val): 66.685478
+[01:54:11] Epoch  28: Loss(train): 66.647171 Loss(val): 66.657463
+[02:12:09] Epoch  30: Loss(train): 66.621796 Loss(val): 66.632065
+[02:32:33] Epoch  32: Loss(train): 66.598854 Loss(val): 66.609077
+[02:53:21] Epoch  34: Loss(train): 66.578270 Loss(val): 66.588493
+[03:10:47] Epoch  36: Loss(train): 66.560196 Loss(val): 66.570473
+[03:33:05] Epoch  38: Loss(train): 66.544395 Loss(val): 66.554642
+[03:51:21] Epoch  40: Loss(train): 66.530609 Loss(val): 66.540833
+[03:53:19] FINAL(40) Loss(val): 66.540833 Accuarcy: 0.080357
+
+Search 23 of 500
+momentum0.99, features=[64, 64, 64], dropout_rate=0.3
+kernel=Tuple{Int64,Int64}[(7, 1), (7, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.01
+
+[03:56:53] INIT Loss(val): 0.156261 Accuarcy: 0.086173
+[04:05:45] Epoch   2: Loss(train): 0.079105 Loss(val): 0.076430
+[04:12:50] Epoch   4: Loss(train): 0.067922 Loss(val): 0.066296
+[04:19:22] Epoch   6: Loss(train): 0.062268 Loss(val): 0.061061
+[04:29:48] Epoch   8: Loss(train): 0.059802 Loss(val): 0.059280
+[04:39:00] Epoch  10: Loss(train): 0.059741 Loss(val): 0.059402
+[04:46:13] Epoch  12: Loss(train): 0.058659 Loss(val): 0.058159
+[04:52:49] Epoch  14: Loss(train): 0.057998 Loss(val): 0.057408
+[05:03:34] Epoch  16: Loss(train): 0.057697 Loss(val): 0.057173
+[05:12:41] Epoch  18: Loss(train): 0.058854 Loss(val): 0.058166
+[05:19:47] Epoch  20: Loss(train): 0.056203 Loss(val): 0.056039
+[05:26:30] Epoch  22: Loss(train): 0.056706 Loss(val): 0.056652
+[05:37:03] Epoch  24: Loss(train): 0.057241 Loss(val): 0.057240
+[05:45:12] Epoch  26: Loss(train): 0.056111 Loss(val): 0.055896
+[05:52:35] Epoch  28: Loss(train): 0.054545 Loss(val): 0.054455
+[05:59:21] Epoch  30: Loss(train): 0.053666 Loss(val): 0.053996
+[06:06:18] Epoch  32: Loss(train): 0.055091 Loss(val): 0.055624
+[06:13:18] Epoch  34: Loss(train): 0.054184 Loss(val): 0.054805
+[06:20:29] Epoch  36: Loss(train): 0.052324 Loss(val): 0.052880
+[06:30:01] Epoch  38: Loss(train): 0.051825 Loss(val): 0.052219
+[06:38:57] Epoch  40: Loss(train): 0.050568 Loss(val): 0.051316
+[06:39:40] FINAL(40) Loss(val): 0.051316 Accuarcy: 0.649643
+
+Search 24 of 500
+momentum0.96, features=[32, 64, 128], dropout_rate=0.8
+kernel=Tuple{Int64,Int64}[(3, 1), (3, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.03
+
+[06:41:03] INIT Loss(val): 0.188385 Accuarcy: 0.083690
+[06:52:54] Epoch   2: Loss(train): 0.072349 Loss(val): 0.071118
+[07:08:32] Epoch   4: Loss(train): 0.064639 Loss(val): 0.063467
+[07:21:35] Epoch   6: Loss(train): 0.061816 Loss(val): 0.060563
+[07:37:04] Epoch   8: Loss(train): 0.058359 Loss(val): 0.057653
+[07:50:18] Epoch  10: Loss(train): 0.057401 Loss(val): 0.056310
+[08:04:59] Epoch  12: Loss(train): 0.056189 Loss(val): 0.055490
+[08:19:04] Epoch  14: Loss(train): 0.054788 Loss(val): 0.054267
+[08:33:18] Epoch  16: Loss(train): 0.054138 Loss(val): 0.053642
+[08:48:22] Epoch  18: Loss(train): 0.053486 Loss(val): 0.052964
+[09:01:45] Epoch  20: Loss(train): 0.053176 Loss(val): 0.052770
+[09:19:46] Epoch  22: Loss(train): 0.052395 Loss(val): 0.052135
+[09:32:18] Epoch  24: Loss(train): 0.052084 Loss(val): 0.051754
+[09:50:48] Epoch  26: Loss(train): 0.051454 Loss(val): 0.051278
+[10:03:51] Epoch  28: Loss(train): 0.051378 Loss(val): 0.051049
+[10:22:26] Epoch  30: Loss(train): 0.051123 Loss(val): 0.050865
+[10:35:48] Epoch  32: Loss(train): 0.050678 Loss(val): 0.050489
+[10:54:01] Epoch  34: Loss(train): 0.050485 Loss(val): 0.050431
+[11:07:16] Epoch  36: Loss(train): 0.050130 Loss(val): 0.050041
+[11:25:31] Epoch  38: Loss(train): 0.050138 Loss(val): 0.049954
+[11:39:24] Epoch  40: Loss(train): 0.049971 Loss(val): 0.049950
+[11:40:54] FINAL(40) Loss(val): 0.049950 Accuarcy: 0.656633
+
+Search 25 of 500
+momentum0.94, features=[96, 192, 192], dropout_rate=0.4
+kernel=Tuple{Int64,Int64}[(7, 1), (7, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.3
+
+[11:43:33] INIT Loss(val): 0.206394 Accuarcy: 0.087228
+[11:52:00] Epoch   2: Loss(train): 0.101289 Loss(val): 0.103436
+[11:59:34] Epoch   4: Loss(train): 0.080375 Loss(val): 0.080668
+[12:05:42] Epoch   6: Loss(train): 0.071989 Loss(val): 0.073021
+[12:11:22] Epoch   8: Loss(train): 0.067130 Loss(val): 0.066621
+[12:17:03] Epoch  10: Loss(train): 0.062482 Loss(val): 0.062284
+[12:26:05] Epoch  12: Loss(train): 0.059126 Loss(val): 0.059354
+[12:33:42] Epoch  14: Loss(train): 0.054605 Loss(val): 0.055075
+[12:40:10] Epoch  16: Loss(train): 0.052491 Loss(val): 0.053066
+[12:46:25] Epoch  18: Loss(train): 0.050310 Loss(val): 0.050966
+[12:52:38] Epoch  20: Loss(train): 0.048141 Loss(val): 0.048782
+[12:59:55] Epoch  22: Loss(train): 0.046192 Loss(val): 0.047045
+[13:06:18] Epoch  24: Loss(train): 0.044195 Loss(val): 0.045356
+[13:12:35] Epoch  26: Loss(train): 0.043286 Loss(val): 0.044734
+[13:18:26] Epoch  28: Loss(train): 0.042307 Loss(val): 0.043518
+[13:24:05] Epoch  30: Loss(train): 0.041010 Loss(val): 0.042333
+[13:31:27] Epoch  32: Loss(train): 0.040678 Loss(val): 0.042079
+[13:38:43] Epoch  34: Loss(train): 0.039944 Loss(val): 0.041404
+[13:45:18] Epoch  36: Loss(train): 0.039505 Loss(val): 0.040942
+[13:51:09] Epoch  38: Loss(train): 0.039001 Loss(val): 0.040541
+[13:56:48] Epoch  40: Loss(train): 0.038627 Loss(val): 0.040171
+[13:57:14] FINAL(40) Loss(val): 0.040171 Accuarcy: 0.615595
+
+Search 26 of 500
+momentum0.99, features=[64, 64, 64], dropout_rate=0.1
+kernel=Tuple{Int64,Int64}[(5, 1), (5, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.03
+
+[13:58:10] INIT Loss(val): 0.150567 Accuarcy: 0.075561
+[14:05:36] Epoch   2: Loss(train): 0.109244 Loss(val): 0.109046
+[14:13:33] Epoch   4: Loss(train): 0.069782 Loss(val): 0.068761
+[14:21:46] Epoch   6: Loss(train): 0.057850 Loss(val): 0.057034
+[14:32:51] Epoch   8: Loss(train): 0.053643 Loss(val): 0.053023
+[14:41:22] Epoch  10: Loss(train): 0.051602 Loss(val): 0.051370
+[14:49:15] Epoch  12: Loss(train): 0.051565 Loss(val): 0.051038
+[14:56:52] Epoch  14: Loss(train): 0.050527 Loss(val): 0.050176
+[15:08:13] Epoch  16: Loss(train): 0.047978 Loss(val): 0.047917
+[15:16:48] Epoch  18: Loss(train): 0.046836 Loss(val): 0.046800
+[15:24:29] Epoch  20: Loss(train): 0.049216 Loss(val): 0.049681
+[15:34:18] Epoch  22: Loss(train): 0.044710 Loss(val): 0.045216
+[15:43:20] Epoch  24: Loss(train): 0.046563 Loss(val): 0.047376
+[15:51:33] Epoch  26: Loss(train): 0.042391 Loss(val): 0.042913
+[15:59:26] Epoch  28: Loss(train): 0.041383 Loss(val): 0.041802
+[16:09:13] Epoch  30: Loss(train): 0.040634 Loss(val): 0.041065
+[16:18:52] Epoch  32: Loss(train): 0.039923 Loss(val): 0.040496
+[16:27:03] Epoch  34: Loss(train): 0.040688 Loss(val): 0.042053
+[16:34:46] Epoch  36: Loss(train): 0.038398 Loss(val): 0.039507
+[16:45:25] Epoch  38: Loss(train): 0.037850 Loss(val): 0.038930
+[16:53:54] Epoch  40: Loss(train): 0.038935 Loss(val): 0.039747
+[16:54:57] FINAL(40) Loss(val): 0.039747 Accuarcy: 0.614592
+
+Search 27 of 500
+momentum0.98, features=[96, 192, 192], dropout_rate=0.1
+kernel=Tuple{Int64,Int64}[(3, 1), (3, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.03
+
+[16:56:34] INIT Loss(val): 0.134213 Accuarcy: 0.091514
+[17:02:28] Epoch   2: Loss(train): 0.090860 Loss(val): 0.090545
+[17:08:42] Epoch   4: Loss(train): 0.078672 Loss(val): 0.076943
+[17:16:48] Epoch   6: Loss(train): 0.069592 Loss(val): 0.068936
+[17:23:32] Epoch   8: Loss(train): 0.066346 Loss(val): 0.065861
+[17:29:47] Epoch  10: Loss(train): 0.064795 Loss(val): 0.064491
+[17:35:36] Epoch  12: Loss(train): 0.063546 Loss(val): 0.063492
+[17:43:11] Epoch  14: Loss(train): 0.062957 Loss(val): 0.062895
+[17:50:18] Epoch  16: Loss(train): 0.062168 Loss(val): 0.062227
+[17:56:49] Epoch  18: Loss(train): 0.061885 Loss(val): 0.061934
+[18:02:49] Epoch  20: Loss(train): 0.061532 Loss(val): 0.061760
+Early stopping with Loss(train) 0.061861 at epoch 20 (Accuracy: 0.608146)
+
+Search 28 of 500
+momentum0.9, features=[64, 64, 64], dropout_rate=0.4
+kernel=Tuple{Int64,Int64}[(3, 1), (3, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.003
+
+[18:04:05] INIT Loss(val): 0.128106 Accuarcy: 0.102738
+[18:12:15] Epoch   2: Loss(train): 0.074689 Loss(val): 0.075390
+[18:24:22] Epoch   4: Loss(train): 0.068198 Loss(val): 0.068720
+[18:33:08] Epoch   6: Loss(train): 0.066180 Loss(val): 0.066643
+[18:40:59] Epoch   8: Loss(train): 0.064997 Loss(val): 0.065444
+[18:53:03] Epoch  10: Loss(train): 0.064207 Loss(val): 0.064619
+[19:02:48] Epoch  12: Loss(train): 0.063483 Loss(val): 0.063943
+[19:10:44] Epoch  14: Loss(train): 0.063037 Loss(val): 0.063462
+[19:21:21] Epoch  16: Loss(train): 0.062571 Loss(val): 0.063062
+[19:32:27] Epoch  18: Loss(train): 0.062316 Loss(val): 0.062758
+[19:41:00] Epoch  20: Loss(train): 0.061978 Loss(val): 0.062450
+[19:49:41] Epoch  22: Loss(train): 0.061717 Loss(val): 0.062215
+[20:02:18] Epoch  24: Loss(train): 0.061504 Loss(val): 0.062028
+[20:11:17] Epoch  26: Loss(train): 0.061352 Loss(val): 0.061835
+[20:19:18] Epoch  28: Loss(train): 0.061151 Loss(val): 0.061692
+[20:31:40] Epoch  30: Loss(train): 0.061015 Loss(val): 0.061562
+[20:41:43] Epoch  32: Loss(train): 0.060934 Loss(val): 0.061451
+[20:49:44] Epoch  34: Loss(train): 0.060828 Loss(val): 0.061372
+[21:01:36] Epoch  36: Loss(train): 0.060729 Loss(val): 0.061282
+[21:11:39] Epoch  38: Loss(train): 0.060642 Loss(val): 0.061227
+[21:20:03] Epoch  40: Loss(train): 0.060570 Loss(val): 0.061159
+[21:20:56] FINAL(40) Loss(val): 0.061159 Accuarcy: 0.525493
+
+Search 29 of 500
+momentum0.92, features=[32, 32, 32], dropout_rate=0.4
+kernel=Tuple{Int64,Int64}[(3, 1), (3, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=1.0
+
+[21:22:36] INIT Loss(val): 0.137907 Accuarcy: 0.095374
+[21:31:00] Epoch   2: Loss(train): 0.065825 Loss(val): 0.066324
+[21:40:00] Epoch   4: Loss(train): 0.058934 Loss(val): 0.057341
+[21:47:02] Epoch   6: Loss(train): 0.051880 Loss(val): 0.052709
+[21:52:58] Epoch   8: Loss(train): 0.044297 Loss(val): 0.045645
+[21:58:54] Epoch  10: Loss(train): 0.041006 Loss(val): 0.042122
+[22:04:54] Epoch  12: Loss(train): 0.040873 Loss(val): 0.042592
+[22:10:53] Epoch  14: Loss(train): 0.037040 Loss(val): 0.038307
+[22:17:16] Epoch  16: Loss(train): 0.039913 Loss(val): 0.042390
+[22:24:29] Epoch  18: Loss(train): 0.031755 Loss(val): 0.033696
+[22:32:00] Epoch  20: Loss(train): 0.030639 Loss(val): 0.030783
+[22:39:06] Epoch  22: Loss(train): 0.028381 Loss(val): 0.028629
+[22:45:35] Epoch  24: Loss(train): 0.027468 Loss(val): 0.027725
+[22:51:38] Epoch  26: Loss(train): 0.025523 Loss(val): 0.025599
+[23:00:27] Epoch  28: Loss(train): 0.025676 Loss(val): 0.025638
+[23:07:41] Epoch  30: Loss(train): 0.025141 Loss(val): 0.025392
+[23:14:21] Epoch  32: Loss(train): 0.024193 Loss(val): 0.024012
+[23:20:33] Epoch  34: Loss(train): 0.023470 Loss(val): 0.023429
+[23:28:02] Epoch  36: Loss(train): 0.022927 Loss(val): 0.022909
+[23:36:20] Epoch  38: Loss(train): 0.022175 Loss(val): 0.022574
+[23:43:15] Epoch  40: Loss(train): 0.021259 Loss(val): 0.021576
+[23:43:50] FINAL(40) Loss(val): 0.021576 Accuarcy: 0.537568
+
+Search 30 of 500
+momentum0.96, features=[96, 192, 192], dropout_rate=0.3
+kernel=Tuple{Int64,Int64}[(3, 1), (3, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=1.0
+
+[23:44:59] INIT Loss(val): 0.157926 Accuarcy: 0.096905
+[00:07:35] Epoch   2: Loss(train): 0.083815 Loss(val): 0.085143
+[00:30:44] Epoch   4: Loss(train): 0.066922 Loss(val): 0.068693
+[00:54:18] Epoch   6: Loss(train): 0.062800 Loss(val): 0.064619
+[01:19:21] Epoch   8: Loss(train): 0.055423 Loss(val): 0.056209
+[01:45:26] Epoch  10: Loss(train): 0.051950 Loss(val): 0.052295
+[02:10:56] Epoch  12: Loss(train): 0.048478 Loss(val): 0.050152
+[02:34:46] Epoch  14: Loss(train): 0.049978 Loss(val): 0.049653
+[03:01:13] Epoch  16: Loss(train): 0.043648 Loss(val): 0.045337
+[03:29:02] Epoch  18: Loss(train): 0.045327 Loss(val): 0.048296
+[03:56:01] Epoch  20: Loss(train): 0.045312 Loss(val): 0.048873
+[04:21:49] Epoch  22: Loss(train): 0.040705 Loss(val): 0.040873
+[04:45:42] Epoch  24: Loss(train): 0.046981 Loss(val): 0.049900
+[05:12:34] Epoch  26: Loss(train): 0.038865 Loss(val): 0.040929
+[05:38:34] Epoch  28: Loss(train): 0.030650 Loss(val): 0.030977
+[06:00:05] Epoch  30: Loss(train): 0.030971 Loss(val): 0.032735
+[06:25:37] Epoch  32: Loss(train): 0.032108 Loss(val): 0.030270
+[06:50:02] Epoch  34: Loss(train): 0.029535 Loss(val): 0.028256
+[07:13:34] Epoch  36: Loss(train): 0.025526 Loss(val): 0.024374
+[07:38:32] Epoch  38: Loss(train): 0.025246 Loss(val): 0.023842
+[08:03:25] Epoch  40: Loss(train): 0.024390 Loss(val): 0.023580
+[08:05:38] FINAL(40) Loss(val): 0.023580 Accuarcy: 0.518469
+
+Search 31 of 500
+momentum0.98, features=[64, 64, 64], dropout_rate=0.6
+kernel=Tuple{Int64,Int64}[(5, 1), (5, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.001
+
+[08:08:47] INIT Loss(val): 0.136395 Accuarcy: 0.102109
+[08:16:59] Epoch   2: Loss(train): 0.083085 Loss(val): 0.084971
+[08:28:48] Epoch   4: Loss(train): 0.070578 Loss(val): 0.071192
+[08:38:26] Epoch   6: Loss(train): 0.067818 Loss(val): 0.068311
+[08:47:17] Epoch   8: Loss(train): 0.066219 Loss(val): 0.066654
+[08:58:49] Epoch  10: Loss(train): 0.065115 Loss(val): 0.065624
+[09:08:46] Epoch  12: Loss(train): 0.064355 Loss(val): 0.064817
+[09:17:31] Epoch  14: Loss(train): 0.063803 Loss(val): 0.064206
+[09:28:50] Epoch  16: Loss(train): 0.063242 Loss(val): 0.063749
+[09:38:48] Epoch  18: Loss(train): 0.062930 Loss(val): 0.063295
+[09:47:45] Epoch  20: Loss(train): 0.062665 Loss(val): 0.063019
+[09:58:15] Epoch  22: Loss(train): 0.062384 Loss(val): 0.062730
+[10:09:26] Epoch  24: Loss(train): 0.062142 Loss(val): 0.062500
+[10:18:33] Epoch  26: Loss(train): 0.061943 Loss(val): 0.062314
+[10:30:07] Epoch  28: Loss(train): 0.061784 Loss(val): 0.062140
+[10:40:47] Epoch  30: Loss(train): 0.061690 Loss(val): 0.062006
+[10:50:03] Epoch  32: Loss(train): 0.061544 Loss(val): 0.061859
+[11:02:31] Epoch  34: Loss(train): 0.061405 Loss(val): 0.061765
+[11:13:54] Epoch  36: Loss(train): 0.061310 Loss(val): 0.061659
+Early stopping with Loss(train) 0.065227 at epoch 36 (Accuracy: 0.477653)
+
+Search 32 of 500
+momentum0.92, features=[32, 64, 128], dropout_rate=0.1
+kernel=Tuple{Int64,Int64}[(5, 1), (3, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.001
+
+[11:16:41] INIT Loss(val): 0.156245 Accuarcy: 0.081514
+[11:35:09] Epoch   2: Loss(train): 0.075818 Loss(val): 0.075976
+[11:54:19] Epoch   4: Loss(train): 0.069581 Loss(val): 0.069867
+[12:16:03] Epoch   6: Loss(train): 0.067491 Loss(val): 0.067784
+[12:33:26] Epoch   8: Loss(train): 0.066309 Loss(val): 0.066613
+[12:55:22] Epoch  10: Loss(train): 0.065570 Loss(val): 0.065932
+[13:16:01] Epoch  12: Loss(train): 0.064942 Loss(val): 0.065361
+[13:34:16] Epoch  14: Loss(train): 0.064421 Loss(val): 0.064918
+[13:50:08] Epoch  16: Loss(train): 0.064045 Loss(val): 0.064583
+[14:10:29] Epoch  18: Loss(train): 0.063691 Loss(val): 0.064300
+[14:27:48] Epoch  20: Loss(train): 0.063414 Loss(val): 0.064062
+[14:47:52] Epoch  22: Loss(train): 0.063163 Loss(val): 0.063851
+[15:05:02] Epoch  24: Loss(train): 0.062957 Loss(val): 0.063692
+[15:25:31] Epoch  26: Loss(train): 0.062760 Loss(val): 0.063534
+[15:44:27] Epoch  28: Loss(train): 0.062596 Loss(val): 0.063417
+[16:02:11] Epoch  30: Loss(train): 0.062460 Loss(val): 0.063311
+[16:22:44] Epoch  32: Loss(train): 0.062348 Loss(val): 0.063210
+[16:40:25] Epoch  34: Loss(train): 0.062251 Loss(val): 0.063149
+[17:00:11] Epoch  36: Loss(train): 0.062162 Loss(val): 0.063097
+[17:19:44] Epoch  38: Loss(train): 0.062111 Loss(val): 0.063032
+[17:37:13] Epoch  40: Loss(train): 0.062047 Loss(val): 0.062991
+[17:39:26] FINAL(40) Loss(val): 0.062991 Accuarcy: 0.500272
+
+Search 33 of 500
+momentum0.94, features=[64, 64, 64], dropout_rate=0.3
+kernel=Tuple{Int64,Int64}[(5, 1), (5, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.001
+
+[17:44:54] INIT Loss(val): 0.129508 Accuarcy: 0.087432
+[18:04:53] Epoch   2: Loss(train): 0.072966 Loss(val): 0.074566
+[18:29:05] Epoch   4: Loss(train): 0.067318 Loss(val): 0.068274
+[18:53:29] Epoch   6: Loss(train): 0.064862 Loss(val): 0.065613
+[19:14:04] Epoch   8: Loss(train): 0.063560 Loss(val): 0.064150
+[19:39:54] Epoch  10: Loss(train): 0.062483 Loss(val): 0.063086
+[20:05:05] Epoch  12: Loss(train): 0.061835 Loss(val): 0.062398
+[20:28:37] Epoch  14: Loss(train): 0.061281 Loss(val): 0.061852
+[20:50:12] Epoch  16: Loss(train): 0.060817 Loss(val): 0.061377
+[21:16:16] Epoch  18: Loss(train): 0.060441 Loss(val): 0.061011
+[21:35:17] Epoch  20: Loss(train): 0.060146 Loss(val): 0.060714
+[21:58:43] Epoch  22: Loss(train): 0.059869 Loss(val): 0.060446
+[22:20:18] Epoch  24: Loss(train): 0.059664 Loss(val): 0.060259
+[22:42:47] Epoch  26: Loss(train): 0.059494 Loss(val): 0.060083
+[23:06:12] Epoch  28: Loss(train): 0.059329 Loss(val): 0.059940
+Early stopping with Loss(train) 0.062314 at epoch 29 (Accuracy: 0.436071)
+
+Search 34 of 500
+momentum0.94, features=[64, 64, 64], dropout_rate=0.8
+kernel=Tuple{Int64,Int64}[(5, 1), (3, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.01
+
+[23:23:32] INIT Loss(val): 0.161144 Accuarcy: 0.107738
+[23:47:42] Epoch   2: Loss(train): 0.079291 Loss(val): 0.079141
+[00:12:49] Epoch   4: Loss(train): 0.067550 Loss(val): 0.066014
+[00:39:19] Epoch   6: Loss(train): 0.063289 Loss(val): 0.061791
+[01:05:04] Epoch   8: Loss(train): 0.060796 Loss(val): 0.059554
+[01:31:19] Epoch  10: Loss(train): 0.059412 Loss(val): 0.058274
+[01:59:17] Epoch  12: Loss(train): 0.058747 Loss(val): 0.057489
+[02:28:58] Epoch  14: Loss(train): 0.058412 Loss(val): 0.057003
+[02:58:46] Epoch  16: Loss(train): 0.057484 Loss(val): 0.056236
+[03:28:32] Epoch  18: Loss(train): 0.057060 Loss(val): 0.055838
+[03:57:59] Epoch  20: Loss(train): 0.056660 Loss(val): 0.055544
+[04:26:58] Epoch  22: Loss(train): 0.056213 Loss(val): 0.055160
+[04:56:08] Epoch  24: Loss(train): 0.056014 Loss(val): 0.054934
+[05:21:16] Epoch  26: Loss(train): 0.055638 Loss(val): 0.054669
+[05:48:43] Epoch  28: Loss(train): 0.055279 Loss(val): 0.054408
+[06:13:58] Epoch  30: Loss(train): 0.055161 Loss(val): 0.054242
+[06:41:24] Epoch  32: Loss(train): 0.054907 Loss(val): 0.054066
+[07:08:20] Epoch  34: Loss(train): 0.054621 Loss(val): 0.053844
+[07:35:37] Epoch  36: Loss(train): 0.054479 Loss(val): 0.053736
+[08:03:00] Epoch  38: Loss(train): 0.054394 Loss(val): 0.053631
+[08:29:53] Epoch  40: Loss(train): 0.054193 Loss(val): 0.053513
+[08:32:42] FINAL(40) Loss(val): 0.053513 Accuarcy: 0.610051
+
+Search 35 of 500
+momentum0.94, features=[64, 64, 64], dropout_rate=0.3
+kernel=Tuple{Int64,Int64}[(5, 1), (3, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.1
+
+[08:36:22] INIT Loss(val): 0.123761 Accuarcy: 0.091531
+[08:57:47] Epoch   2: Loss(train): 0.065259 Loss(val): 0.065832
+[09:19:41] Epoch   4: Loss(train): 0.059903 Loss(val): 0.058281
+[09:44:11] Epoch   6: Loss(train): 0.056566 Loss(val): 0.054878
+[10:10:43] Epoch   8: Loss(train): 0.053432 Loss(val): 0.052172
+[10:35:42] Epoch  10: Loss(train): 0.051702 Loss(val): 0.050658
+[10:57:51] Epoch  12: Loss(train): 0.050034 Loss(val): 0.049270
+[11:24:31] Epoch  14: Loss(train): 0.048701 Loss(val): 0.048126
+[11:51:11] Epoch  16: Loss(train): 0.047392 Loss(val): 0.047040
+[12:17:09] Epoch  18: Loss(train): 0.046799 Loss(val): 0.046500
+[12:40:51] Epoch  20: Loss(train): 0.045793 Loss(val): 0.045674
+[13:05:28] Epoch  22: Loss(train): 0.045341 Loss(val): 0.045252
+[13:25:44] Epoch  24: Loss(train): 0.044809 Loss(val): 0.044760
+[13:50:57] Epoch  26: Loss(train): 0.044566 Loss(val): 0.044537
+[14:14:24] Epoch  28: Loss(train): 0.043879 Loss(val): 0.043859
+[14:36:11] Epoch  30: Loss(train): 0.043258 Loss(val): 0.043268
+[15:00:39] Epoch  32: Loss(train): 0.042763 Loss(val): 0.042793
+[15:25:03] Epoch  34: Loss(train): 0.042519 Loss(val): 0.042491
+[15:48:44] Epoch  36: Loss(train): 0.042028 Loss(val): 0.041963
+[16:10:14] Epoch  38: Loss(train): 0.041775 Loss(val): 0.041745
+[16:34:21] Epoch  40: Loss(train): 0.041268 Loss(val): 0.041277
+[16:37:30] FINAL(40) Loss(val): 0.041277 Accuarcy: 0.626071
+
+Search 36 of 500
+momentum0.94, features=[32, 32, 32], dropout_rate=0.4
+kernel=Tuple{Int64,Int64}[(5, 1), (3, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.3
+
+[16:42:54] INIT Loss(val): 0.113207 Accuarcy: 0.083673
+[17:05:24] Epoch   2: Loss(train): 0.071602 Loss(val): 0.071321
+[17:30:50] Epoch   4: Loss(train): 0.060653 Loss(val): 0.061529
+[17:55:40] Epoch   6: Loss(train): 0.050651 Loss(val): 0.051918
+[18:18:57] Epoch   8: Loss(train): 0.046450 Loss(val): 0.047496
+[18:46:06] Epoch  10: Loss(train): 0.042359 Loss(val): 0.043354
+[19:13:08] Epoch  12: Loss(train): 0.038272 Loss(val): 0.038781
+[19:39:21] Epoch  14: Loss(train): 0.039356 Loss(val): 0.039668
+[20:03:45] Epoch  16: Loss(train): 0.036349 Loss(val): 0.036034
+[20:27:40] Epoch  18: Loss(train): 0.034223 Loss(val): 0.034151
+[20:55:17] Epoch  20: Loss(train): 0.032276 Loss(val): 0.032745
+[21:16:30] Epoch  22: Loss(train): 0.029983 Loss(val): 0.030295
+[21:42:49] Epoch  24: Loss(train): 0.028562 Loss(val): 0.028459
+[22:06:22] Epoch  26: Loss(train): 0.027147 Loss(val): 0.026862
+[22:29:11] Epoch  28: Loss(train): 0.025605 Loss(val): 0.025301
+[22:54:25] Epoch  30: Loss(train): 0.025205 Loss(val): 0.025065
+[23:19:33] Epoch  32: Loss(train): 0.024206 Loss(val): 0.024281
+[23:44:35] Epoch  34: Loss(train): 0.023469 Loss(val): 0.023604
+[00:07:42] Epoch  36: Loss(train): 0.022483 Loss(val): 0.022621
+[00:31:31] Epoch  38: Loss(train): 0.022307 Loss(val): 0.022504
+[00:57:02] Epoch  40: Loss(train): 0.021628 Loss(val): 0.021826
+[01:00:15] FINAL(40) Loss(val): 0.021826 Accuarcy: 0.606854
+
+Search 37 of 500
+momentum0.92, features=[64, 64, 64], dropout_rate=0.8
+kernel=Tuple{Int64,Int64}[(3, 1), (3, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=1.0
+
+[01:05:55] INIT Loss(val): 0.118011 Accuarcy: 0.093418
+[01:28:59] Epoch   2: Loss(train): 0.071947 Loss(val): 0.071658
+[01:54:44] Epoch   4: Loss(train): 0.057903 Loss(val): 0.058991
+[02:20:57] Epoch   6: Loss(train): 0.048510 Loss(val): 0.047729
+[02:46:19] Epoch   8: Loss(train): 0.042900 Loss(val): 0.043739
+[03:11:28] Epoch  10: Loss(train): 0.036034 Loss(val): 0.035340
+[03:38:58] Epoch  12: Loss(train): 0.035133 Loss(val): 0.036576
+[04:06:04] Epoch  14: Loss(train): 0.031527 Loss(val): 0.032155
+[04:33:18] Epoch  16: Loss(train): 0.032142 Loss(val): 0.033449
+[04:56:07] Epoch  18: Loss(train): 0.029012 Loss(val): 0.028829
+[05:20:51] Epoch  20: Loss(train): 0.027290 Loss(val): 0.027411
+[05:43:24] Epoch  22: Loss(train): 0.026393 Loss(val): 0.025477
+[06:09:01] Epoch  24: Loss(train): 0.025136 Loss(val): 0.024777
+[06:34:51] Epoch  26: Loss(train): 0.023614 Loss(val): 0.022565
+[07:00:12] Epoch  28: Loss(train): 0.023541 Loss(val): 0.023284
+[07:24:35] Epoch  30: Loss(train): 0.023083 Loss(val): 0.022527
+[07:48:19] Epoch  32: Loss(train): 0.022078 Loss(val): 0.021276
+[08:12:51] Epoch  34: Loss(train): 0.021870 Loss(val): 0.021672
+[08:36:53] Epoch  36: Loss(train): 0.021393 Loss(val): 0.021033
+[09:00:56] Epoch  38: Loss(train): 0.021274 Loss(val): 0.020903
+[09:27:55] Epoch  40: Loss(train): 0.022459 Loss(val): 0.021333
+[09:31:11] FINAL(40) Loss(val): 0.021333 Accuarcy: 0.573265
+
+Search 38 of 500
+momentum0.92, features=[96, 192, 192], dropout_rate=0.8
+kernel=Tuple{Int64,Int64}[(7, 1), (7, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.01
+
+[09:40:13] INIT Loss(val): 0.177381 Accuarcy: 0.082194
+[10:02:06] Epoch   2: Loss(train): 0.100145 Loss(val): 0.101442
+[10:28:32] Epoch   4: Loss(train): 0.090080 Loss(val): 0.090478
+[10:54:33] Epoch   6: Loss(train): 0.086961 Loss(val): 0.087106
+[11:18:52] Epoch   8: Loss(train): 0.085055 Loss(val): 0.085218
+[11:42:03] Epoch  10: Loss(train): 0.084008 Loss(val): 0.084082
+[12:08:51] Epoch  12: Loss(train): 0.083061 Loss(val): 0.083309
+[12:34:18] Epoch  14: Loss(train): 0.082237 Loss(val): 0.082573
+[12:54:57] Epoch  16: Loss(train): 0.082143 Loss(val): 0.082355
+[13:18:12] Epoch  18: Loss(train): 0.081369 Loss(val): 0.081832
+[13:40:38] Epoch  20: Loss(train): 0.081240 Loss(val): 0.081622
+[14:05:08] Epoch  22: Loss(train): 0.080846 Loss(val): 0.081271
+[14:28:44] Epoch  24: Loss(train): 0.080775 Loss(val): 0.081209
+Early stopping with Loss(train) 0.087498 at epoch 24 (Accuracy: 0.458163)
+
+Search 39 of 500
+momentum0.94, features=[64, 64, 64], dropout_rate=0.1
+kernel=Tuple{Int64,Int64}[(3, 1), (3, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.003
+
+[14:32:44] INIT Loss(val): 0.131732 Accuarcy: 0.093946
+[14:43:04] Epoch   2: Loss(train): 0.081255 Loss(val): 0.079859
+[14:57:19] Epoch   4: Loss(train): 0.068332 Loss(val): 0.067841
+[15:09:13] Epoch   6: Loss(train): 0.064528 Loss(val): 0.064704
+[15:21:16] Epoch   8: Loss(train): 0.062921 Loss(val): 0.063261
+[15:34:46] Epoch  10: Loss(train): 0.062030 Loss(val): 0.062498
+[15:45:50] Epoch  12: Loss(train): 0.061265 Loss(val): 0.061891
+[16:00:28] Epoch  14: Loss(train): 0.060731 Loss(val): 0.061435
+[16:12:25] Epoch  16: Loss(train): 0.060351 Loss(val): 0.061083
+[16:24:49] Epoch  18: Loss(train): 0.060006 Loss(val): 0.060862
+[16:37:32] Epoch  20: Loss(train): 0.059765 Loss(val): 0.060644
+[16:48:56] Epoch  22: Loss(train): 0.059551 Loss(val): 0.060483
+[17:01:56] Epoch  24: Loss(train): 0.059328 Loss(val): 0.060275
+[17:14:41] Epoch  26: Loss(train): 0.059153 Loss(val): 0.060095
+[17:26:03] Epoch  28: Loss(train): 0.058965 Loss(val): 0.059951
+[17:40:07] Epoch  30: Loss(train): 0.058867 Loss(val): 0.059819
+[17:52:28] Epoch  32: Loss(train): 0.058637 Loss(val): 0.059653
+[18:05:08] Epoch  34: Loss(train): 0.058543 Loss(val): 0.059542
+[18:19:54] Epoch  36: Loss(train): 0.058402 Loss(val): 0.059439
+[18:30:58] Epoch  38: Loss(train): 0.058293 Loss(val): 0.059341
+Early stopping with Loss(train) 0.059225 at epoch 38 (Accuracy: 0.544405)
+
+Search 40 of 500
+momentum0.92, features=[32, 32, 32], dropout_rate=0.1
+kernel=Tuple{Int64,Int64}[(5, 1), (5, 1), (2, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.1
+
+[18:34:47] INIT Loss(val): 0.124025 Accuarcy: 0.088776
+[18:47:33] Epoch   2: Loss(train): 0.057543 Loss(val): 0.058215
+[18:57:06] Epoch   4: Loss(train): 0.051879 Loss(val): 0.052554
+[19:05:25] Epoch   6: Loss(train): 0.048303 Loss(val): 0.048884
+[19:19:12] Epoch   8: Loss(train): 0.047418 Loss(val): 0.046097
+[19:28:58] Epoch  10: Loss(train): 0.046238 Loss(val): 0.044915
+[19:37:28] Epoch  12: Loss(train): 0.044154 Loss(val): 0.043053
+[19:51:17] Epoch  14: Loss(train): 0.042655 Loss(val): 0.041790
+[20:01:13] Epoch  16: Loss(train): 0.041199 Loss(val): 0.040503
+[20:09:50] Epoch  18: Loss(train): 0.040215 Loss(val): 0.039571
+[20:23:19] Epoch  20: Loss(train): 0.039205 Loss(val): 0.038591
+[20:33:47] Epoch  22: Loss(train): 0.038505 Loss(val): 0.037907
+[20:42:15] Epoch  24: Loss(train): 0.037870 Loss(val): 0.037287
+[20:50:49] Epoch  26: Loss(train): 0.037377 Loss(val): 0.036808
+[20:59:19] Epoch  28: Loss(train): 0.036958 Loss(val): 0.036429
+[21:08:32] Epoch  30: Loss(train): 0.036559 Loss(val): 0.036016
+[21:21:13] Epoch  32: Loss(train): 0.036171 Loss(val): 0.035656
+[21:30:26] Epoch  34: Loss(train): 0.035821 Loss(val): 0.035373
+[21:39:16] Epoch  36: Loss(train): 0.035724 Loss(val): 0.035267
+[21:51:46] Epoch  38: Loss(train): 0.035684 Loss(val): 0.035258
+[22:01:20] Epoch  40: Loss(train): 0.035597 Loss(val): 0.035128
+[22:02:18] FINAL(40) Loss(val): 0.035128 Accuarcy: 0.636701
+
+Search 41 of 500
+momentum0.98, features=[64, 64, 64], dropout_rate=0.1
+kernel=Tuple{Int64,Int64}[(3, 1), (3, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(3, 1), (3, 1)], learning_rate=0.003
+
+[22:03:51] INIT Loss(val): 0.116976 Accuarcy: 0.093078
+[22:29:47] Epoch   2: Loss(train): 0.064875 Loss(val): 0.063949
+[22:57:17] Epoch   4: Loss(train): 0.059843 Loss(val): 0.058989
+[23:24:07] Epoch   6: Loss(train): 0.057889 Loss(val): 0.057287
+[23:50:54] Epoch   8: Loss(train): 0.056778 Loss(val): 0.056329
+[00:17:41] Epoch  10: Loss(train): 0.056209 Loss(val): 0.055885
+[00:43:47] Epoch  12: Loss(train): 0.055611 Loss(val): 0.055446
+[01:11:43] Epoch  14: Loss(train): 0.055447 Loss(val): 0.055392
+[01:40:33] Epoch  16: Loss(train): 0.055111 Loss(val): 0.055106
+[02:09:24] Epoch  18: Loss(train): 0.054887 Loss(val): 0.054910
+[02:39:30] Epoch  20: Loss(train): 0.054918 Loss(val): 0.054874
+[03:09:24] Epoch  22: Loss(train): 0.054555 Loss(val): 0.054594
+[03:38:37] Epoch  24: Loss(train): 0.054447 Loss(val): 0.054464
+[04:07:54] Epoch  26: Loss(train): 0.054165 Loss(val): 0.054282
+[04:34:20] Epoch  28: Loss(train): 0.053983 Loss(val): 0.054111
+[05:01:39] Epoch  30: Loss(train): 0.053737 Loss(val): 0.053914
+[05:27:48] Epoch  32: Loss(train): 0.053491 Loss(val): 0.053724
+[05:55:10] Epoch  34: Loss(train): 0.053195 Loss(val): 0.053495
+[06:23:22] Epoch  36: Loss(train): 0.052964 Loss(val): 0.053314
+[06:51:28] Epoch  38: Loss(train): 0.052682 Loss(val): 0.053067
+[07:19:10] Epoch  40: Loss(train): 0.052387 Loss(val): 0.052851
+[07:23:01] FINAL(40) Loss(val): 0.052851 Accuarcy: 0.607602
+
+Search 42 of 500
+momentum0.96, features=[32, 64, 128], dropout_rate=0.1
+kernel=Tuple{Int64,Int64}[(7, 1), (7, 1), (3, 6)], pooldims=Tuple{Int64,Int64}[(2, 1), (2, 1)], learning_rate=0.001
+
+[07:29:16] INIT Loss(val): 0.176981 Accuarcy: 0.089626
+[08:08:38] Epoch   2: Loss(train): 0.084734 Loss(val): 0.084191
+[08:51:50] Epoch   4: Loss(train): 0.074645 Loss(val): 0.074708
+[09:34:55] Epoch   6: Loss(train): 0.071603 Loss(val): 0.072190
+[10:19:23] Epoch   8: Loss(train): 0.070126 Loss(val): 0.070948
+[11:06:15] Epoch  10: Loss(train): 0.069323 Loss(val): 0.070290
