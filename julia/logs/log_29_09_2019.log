@@ -646,3 +646,5 @@ Configuration learning_rate=0.1, decay_step=20
 [13:48:43] Epoch 137: Loss(train): 0.077453 Loss(val): 0.078504
 [13:52:31] Epoch 138: Loss(train): 0.077453 Loss(val): 0.078504
 [13:56:19] Epoch 139: Loss(train): 0.077453 Loss(val): 0.078504
+[13:59:54] Epoch 140: Loss(train): 0.077453 Loss(val): 0.078504
+[14:03:34] Epoch 141: Loss(train): 0.077453 Loss(val): 0.078504
