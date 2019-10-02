@@ -1,9 +1,8 @@
 
 """
 Author: Sebastian Vendt, University of Ulm
-
-
-
+This script implements the convolutional neural network for infering tap locations from motion data frames. 
+For detailed documentation please read through ReportMotionLogger.pdf in the github repo.
 """
 
 using ArgParse
@@ -18,7 +17,7 @@ s = ArgParseSettings()
     "--epochs" 
 		help = "Number of epochs"
 		arg_type = Int64
-		default = 40
+		default = 100
 	"--logmsg"
 		help = "additional message describing the training log"
 		arg_type = String
@@ -52,14 +51,14 @@ norm(x::TrackedArray{T}) where T = sqrt(sum(abs2.(x)) + eps(T))
 # PARAMETERS
 ######################
 const batch_size = 100
-momentum = 0.9f0
+momentum = 0.99f0
 const lambda = 0.0005f0
-const delta = 0.00001
-learning_rate = 0.1f0
+const delta = 0.00006
+learning_rate = 0.03f0
 validate = parsed_args["eval"]
 const epochs = parsed_args["epochs"]
 const decay_rate = 0.1f0
-const decay_step = 40
+const decay_step = 60
 const usegpu = parsed_args["gpu"]
 const printout_interval = 2
 const time_format = "HH:MM:SS"
@@ -69,11 +68,11 @@ data_size = (60, 6) # resulting in a 300ms frame
 # DEFAULT ARCHITECTURE
 channels = 1
 features = [32, 64, 128] # needs to find the relation between the axis which represents the screen position 
-kernel = [(3,1), (3,1), (3,6)]  # convolute only horizontally, last should convolute all 6 rows together to map relations between the channels  
-pooldims = [(2,1), (2,1)]# (30,6) -> (15,6)
+kernel = [(5,1), (5,1), (2,6)]  # convolute only horizontally, last should convolute all 6 rows together to map relations between the channels  
+pooldims = [(3,1), (3,1)]# (30,6) -> (15,6)
 # formula for calculating output dimensions of convolution: 
 # dim1 = ((dim1 - Filtersize + 2 * padding) / stride) + 1
-inputDense = [1664, 600, 300] # prod((data_size .÷ pooldims[1] .÷ pooldims[2]) .- kernel[3] .+ 1) * features[3]
+inputDense = [0, 600, 300] # the first dense layer is automatically calculated
 dropout_rate = 0.3f0
 
 # random search values
@@ -112,8 +111,6 @@ function adapt_learnrate(epoch_idx)
 end
 
 # TODO different idea for the accuracy: draw circle around ground truth and if prediction lays within the circle count this as a hit 
-# TODO calculate the mean distance in pixel without normalizantion
-
 function accuracy(model, x, y)
 	y_hat = Tracker.data(model(x))
 	return mean(mapslices(button_number, y_hat, dims=1) .== mapslices(button_number, y, dims=1))
@@ -132,7 +129,7 @@ function button_number(X)
 end
 
 function loss(model, x, y) 
-	# quadratic euclidean distance + parameternorm
+	# quadratic euclidean distance + norm 
 	return Flux.mse(model(x), y) + lambda * sum(norm, params(model))
 end
 
@@ -215,14 +212,6 @@ function train_model()
         opt.eta = adapt_learnrate(i)
 		log_csv(model, i)
 		log(model, i, !validate)
-		
-		# early stopping
-		curr_loss = loss(model, train_set)
-		if(abs(last_loss - curr_loss) < delta)
-			@printf(io, "Early stopping with Loss(train) %f at epoch %d (Accuracy: %f)\n", curr_loss, i, accuracy(model, validation_set))
-			return eval_model(model)
-		end
-		last_loss = curr_loss
     end
     return eval_model(model)
 end
@@ -230,6 +219,7 @@ end
 function random_search()
 	rng = MersenneTwister()
 	results = []
+	global epochs = 40
 	for search in 1:800
 		# create random set
 		global momentum = rand(rng, rs_momentum)

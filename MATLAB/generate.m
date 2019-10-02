@@ -50,8 +50,8 @@ TimeBetweenTouchEvents = csvData(indicesTBT(2:end), TIMEBETWEENTOUCHEVENTS);
 TimeBetweenTouchEvents = sort(TimeBetweenTouchEvents);
 TimeBetweenTouchEvents = TimeBetweenTouchEvents(1:end-8);
 
-maxGYRO = [max(dataset(:,:,1)')', max(dataset(:,:,2)')', max(dataset(:,:,3)')'];
-maxACC = [max(dataset(:,:,4)')', max(dataset(:,:,5)')', max(dataset(:,:,6)')'];
+maxGYRO = [max(squeeze(abs(dataset(:,1,:))))', max(squeeze(abs(dataset(:,2,:))))', max(squeeze(abs(dataset(:,3,:))))'];
+maxACC = [max(squeeze(abs(dataset(:,4,:))))', max(squeeze(abs(dataset(:,5,:))))', max(squeeze(abs(dataset(:,6,:))))'];
 
 fig1 = figure;
 histogram(pointerDownTimes ./ 1000000) % Divide from ns to ms 
@@ -61,7 +61,7 @@ histogram(TimeBetweenTouchEvents ./ 1000000) % Divide from ns to ms
 title('Histogram of the time between sequential touch events in ms')
 fig3 = figure;
 subplot(2,3,1)
-nbins = 10;
+nbins = 40;
 histogram(maxGYRO(:, 1), nbins)
 title('Hist Max Gyro X')
 subplot(2,3,2)

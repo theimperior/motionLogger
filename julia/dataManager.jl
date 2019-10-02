@@ -8,7 +8,7 @@ using Flux:onehotbatch
 
 # dimension of coordinates (labels): (x, y)
 lbls_dims = (1080, 980)
-lbls_offset = (0, 699)
+# lbls_offset = (0, 699)
 
 """
 	make_minibatch(X, Y, idxset)
@@ -66,7 +66,8 @@ function make_batch(filepath, filenames...; batch_size=100, normalize_data=true,
 	data = cat(dims=4, data)
 	
 	# normalize the labels 
-	labels = (labels .- lbls_offset) ./ lbls_dims
+	# labels = (labels .- lbls_offset) ./ lbls_dims
+	labels = labels ./ lbls_dims;
 
     # rearrange the data array 
 	# size(data) = (50, 6, 1, N)

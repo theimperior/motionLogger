@@ -38,6 +38,7 @@ function [data, labels] = generateTrainingDataFromCSV(file, offset, len, framesi
       labels = cat(2, labels, file(indices, X_COORD:Y_COORD)');
   end
   fprintf("created %d frames out of %d touch events\n", size(data, 3), length(indices));
+  labels = bsxfun(@minus, labels, [0; 699])
 end
 
 function samples = getSamplesFromData(file, indices, framesize, frameoffset)
